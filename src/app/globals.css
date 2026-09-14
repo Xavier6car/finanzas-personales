@@ -118,110 +118,115 @@ a {
   border-radius: 6px;
 }
 
-/* Componentes reutilizables */
-.card {
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-}
+/* Componentes reutilizables — en @layer components para que las utilidades
+   de Tailwind (hidden, sm:flex, etc.) siempre tengan prioridad sobre estas
+   clases cuando se combinan en el mismo elemento, sin importar el orden en
+   que aparezcan en este archivo. */
+@layer components {
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
 
-.input,
-select.input,
-textarea.input {
-  width: 100%;
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.6rem 0.75rem;
-  font-size: 0.95rem;
-  color: var(--text-primary);
-}
+  .input,
+  select.input,
+  textarea.input {
+    width: 100%;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.75rem;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+  }
 
-.input:focus {
-  border-color: var(--brand);
-}
+  .input:focus {
+    border-color: var(--brand);
+  }
 
-.label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 0.3rem;
-}
+  .label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+  }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border-radius: var(--radius-sm);
-  padding: 0.6rem 1rem;
-  transition: transform 0.08s ease, opacity 0.15s ease, background 0.15s ease;
-  cursor: pointer;
-  border: 1px solid transparent;
-}
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1rem;
+    transition: transform 0.08s ease, opacity 0.15s ease, background 0.15s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
 
-.btn:active {
-  transform: scale(0.98);
-}
+  .btn:active {
+    transform: scale(0.98);
+  }
 
-.btn-primary {
-  background: var(--brand);
-  color: white;
-}
+  .btn-primary {
+    background: var(--brand);
+    color: white;
+  }
 
-.btn-primary:hover {
-  opacity: 0.92;
-}
+  .btn-primary:hover {
+    opacity: 0.92;
+  }
 
-.btn-secondary {
-  background: var(--surface-2);
-  color: var(--text-primary);
-  border-color: var(--border);
-}
+  .btn-secondary {
+    background: var(--surface-2);
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
 
-.btn-secondary:hover {
-  background: color-mix(in srgb, var(--surface-2) 70%, var(--border));
-}
+  .btn-secondary:hover {
+    background: color-mix(in srgb, var(--surface-2) 70%, var(--border));
+  }
 
-.btn-danger {
-  background: transparent;
-  color: var(--critical);
-  border-color: color-mix(in srgb, var(--critical) 40%, transparent);
-}
+  .btn-danger {
+    background: transparent;
+    color: var(--critical);
+    border-color: color-mix(in srgb, var(--critical) 40%, transparent);
+  }
 
-.btn-danger:hover {
-  background: color-mix(in srgb, var(--critical) 10%, transparent);
-}
+  .btn-danger:hover {
+    background: color-mix(in srgb, var(--critical) 10%, transparent);
+  }
 
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-}
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+  }
 
-.btn-ghost:hover {
-  background: var(--surface-2);
-}
+  .btn-ghost:hover {
+    background: var(--surface-2);
+  }
 
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.15rem 0.55rem;
-  border-radius: 999px;
-  background: var(--surface-2);
-  color: var(--text-secondary);
-}
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--text-secondary);
+  }
 
-.scrollbar-thin::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 999px;
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 999px;
+  }
 }
