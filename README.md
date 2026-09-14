@@ -22,10 +22,12 @@ Necesitas una base de datos PostgreSQL (local o gratis en la nube, ver
 ```bash
 npm install
 cp .env.example .env          # pega tu DATABASE_URL de Postgres
-npm run db:push               # crea las tablas a partir del esquema
-npm run db:seed               # crea los usuarios Xavier y Camila
 npm run dev                   # http://localhost:3000
 ```
+
+`npm run dev` y `npm run build` sincronizan las tablas y siembran los
+usuarios Xavier/Camila automáticamente antes de arrancar (ver `db:setup` en
+`package.json`), así que no hace falta correr nada más a mano.
 
 Scripts útiles:
 
@@ -35,8 +37,9 @@ Scripts útiles:
 | `npm run build`       | Build de producción                             |
 | `npm run start`       | Sirve el build de producción                    |
 | `npm run lint`        | ESLint                                          |
-| `npm run db:push`     | Sincroniza las tablas con `prisma/schema.prisma` |
-| `npm run db:seed`     | (Re)crea los usuarios Xavier y Camila            |
+| `npm run db:setup`    | Sincroniza tablas + siembra usuarios (automático antes de dev/build) |
+| `npm run db:push`     | Solo sincroniza las tablas con `prisma/schema.prisma` |
+| `npm run db:seed`     | Solo (re)crea los usuarios Xavier y Camila            |
 | `npm run db:studio`   | Explorador visual de la base de datos            |
 
 ## Publicarla en la web (para entrar desde cualquier navegador/celular)
@@ -58,24 +61,17 @@ minutos, sin tarjeta de crédito:
      `Xavier6car/finanzas-personales`.
    - En "Environment Variables" agrega:
      - `DATABASE_URL` = el connection string de Neon del paso 1.
-   - Click en **Deploy**. Cuando termine, Vercel te da una URL como
-     `https://finanzas-personales-xxxx.vercel.app` — esa es la que abren
-     Xavier y Camila desde cualquier navegador o celular.
+   - Click en **Deploy**.
 
-3. **Crear las tablas y los usuarios en la base de producción** (una sola
-   vez). Desde tu computadora, con el repo clonado:
-   ```bash
-   npm install
-   echo 'DATABASE_URL="<el connection string de Neon>"' > .env
-   npm run db:push
-   npm run db:seed
-   ```
-   (También puedo hacer este paso yo si me compartes el connection string
-   de Neon en el chat.)
+   Durante el build, el proyecto sincroniza las tablas y crea los usuarios
+   Xavier/Camila automáticamente (script `db:setup`, ver más abajo) — no hay
+   que correr nada a mano ni antes ni después. Cuando termine, Vercel te da
+   una URL como `https://finanzas-personales-xxxx.vercel.app`, esa es la que
+   abren Xavier y Camila desde cualquier navegador o celular.
 
-4. Listo — recarga la URL de Vercel y ya debería aparecer la pantalla
-   "¿Quién eres?". Cada vez que se haga `git push` a esta rama, Vercel
-   vuelve a desplegar automáticamente.
+3. Listo. Cada vez que se haga `git push` a esta rama, Vercel vuelve a
+   desplegar automáticamente (y re-sincroniza la base con lo que haya
+   cambiado en `prisma/schema.prisma`).
 
 > Si prefieres otro hosting (Netlify, Railway, tu propio servidor, etc.) el
 > único requisito es exponer la variable `DATABASE_URL` apuntando a un
