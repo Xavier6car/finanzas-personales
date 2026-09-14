@@ -125,24 +125,24 @@ export function AppShell({
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium ${
+            className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium ${
               isActive(item.href) ? "text-brand" : "text-[var(--text-muted)]"
             }`}
           >
             <span className="text-lg" aria-hidden>
               {item.icon}
             </span>
-            {item.label}
+            <span className="w-full truncate text-center">{item.label}</span>
           </Link>
         ))}
         <button
-          className="flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium text-[var(--text-muted)]"
+          className="flex min-w-0 flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium text-[var(--text-muted)]"
           onClick={() => setDrawerOpen(true)}
         >
           <span className="text-lg" aria-hidden>
             ⋯
           </span>
-          Más
+          <span className="w-full truncate text-center">Más</span>
         </button>
       </nav>
 

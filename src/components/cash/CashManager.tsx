@@ -28,7 +28,7 @@ export function CashManager({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold">Efectivo</h1>
           <p className="text-sm text-[var(--text-secondary)]">
