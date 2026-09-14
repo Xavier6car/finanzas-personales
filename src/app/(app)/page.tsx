@@ -1,4 +1,5 @@
 import { getDashboardData } from "@/lib/dashboard-data";
+import { getCashBalances } from "@/lib/cash-data";
 import { getRangeForPeriod, type PeriodKey } from "@/lib/period";
 import { formatMoney, formatPercent } from "@/lib/format";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -21,7 +22,8 @@ export default async function DashboardPage({
   const end = typeof sp.end === "string" ? sp.end : undefined;
 
   const range = getRangeForPeriod(period, start, end);
-  const data = await getDashboardData(range);
+  const [data, cashBalances] = await Promise.all([getDashboardData(range), getCashBalances()]);
+  const totalCash = cashBalances.reduce((a, b) => a + b.balance, 0);
 
   return (
     <div className="flex flex-col gap-6">
@@ -52,6 +54,7 @@ export default async function DashboardPage({
           icon="⚖️"
         />
         <StatCard label="Ahorro acumulado" value={formatMoney(data.totals.cumulativeSavings)} icon="🏦" />
+        <StatCard label="Efectivo disponible" value={formatMoney(totalCash)} tone={totalCash < 0 ? "critical" : "default"} icon="💰" />
         <StatCard
           label="% de ingresos gastado"
           value={formatPercent(data.totals.percentSpent)}

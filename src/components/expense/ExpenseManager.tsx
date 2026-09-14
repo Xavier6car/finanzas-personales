@@ -24,6 +24,7 @@ interface ExpenseRow {
   date: Date;
   isShared: boolean;
   splitType: string;
+  paidWithCash: boolean;
   shares: { userId: string; amount: number }[];
 }
 
@@ -31,10 +32,12 @@ export function ExpenseManager({
   users,
   currentUserId,
   expenses,
+  cashBalances,
 }: {
   users: UserOption[];
   currentUserId: string;
   expenses: ExpenseRow[];
+  cashBalances?: { userId: string; balance: number }[];
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -84,14 +87,16 @@ export function ExpenseManager({
                     <p className="text-xs text-[var(--text-muted)]">
                       {expense.category} · {formatDate(expense.date)} · Pagó {payer?.name}
                     </p>
-                    {expense.isShared && (
+                    {(expense.isShared || expense.paidWithCash) && (
                       <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-[var(--text-secondary)]">
-                        <span className="pill">🤝 Compartido</span>
-                        {expense.shares.map((s) => (
-                          <span key={s.userId}>
-                            {userOf(s.userId)?.name}: {formatMoney(s.amount)}
-                          </span>
-                        ))}
+                        {expense.isShared && <span className="pill">🤝 Compartido</span>}
+                        {expense.paidWithCash && <span className="pill">💵 Efectivo</span>}
+                        {expense.isShared &&
+                          expense.shares.map((s) => (
+                            <span key={s.userId}>
+                              {userOf(s.userId)?.name}: {formatMoney(s.amount)}
+                            </span>
+                          ))}
                       </p>
                     )}
                   </div>
@@ -118,6 +123,7 @@ export function ExpenseManager({
                           isShared: expense.isShared,
                           splitType: expense.splitType as "NONE" | "EQUAL" | "CUSTOM",
                           customShares: expense.shares,
+                          paidWithCash: expense.paidWithCash,
                         });
                         setOpen(true);
                       }}
@@ -134,7 +140,13 @@ export function ExpenseManager({
       </div>
 
       <Modal open={open} onClose={close} title={editing ? "Editar gasto" : "Nuevo gasto"}>
-        <ExpenseForm users={users} currentUserId={currentUserId} initial={editing} onSaved={close} />
+        <ExpenseForm
+          users={users}
+          currentUserId={currentUserId}
+          initial={editing}
+          cashBalances={cashBalances}
+          onSaved={close}
+        />
       </Modal>
     </div>
   );

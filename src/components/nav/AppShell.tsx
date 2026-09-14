@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/", label: "Inicio", icon: "🏠" },
   { href: "/ingresos", label: "Ingresos", icon: "💵" },
   { href: "/gastos", label: "Gastos", icon: "🧾" },
+  { href: "/efectivo", label: "Efectivo", icon: "💰" },
   { href: "/historial", label: "Historial", icon: "📜" },
   { href: "/presupuestos", label: "Presupuestos", icon: "📊" },
   { href: "/metas", label: "Metas de ahorro", icon: "🎯" },

@@ -16,15 +16,21 @@ export interface ExpenseFormValues extends ExpenseInput {
   id?: string;
 }
 
+function round2(n: number): number {
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+
 export function ExpenseForm({
   users,
   currentUserId,
   initial,
+  cashBalances,
   onSaved,
 }: {
   users: UserOption[];
   currentUserId: string;
   initial?: ExpenseFormValues;
+  cashBalances?: { userId: string; balance: number }[];
   onSaved?: () => void;
 }) {
   const router = useRouter();
@@ -44,6 +50,7 @@ export function ExpenseForm({
       isShared: false,
       splitType: "NONE",
       customShares: defaultShares,
+      paidWithCash: false,
       notes: "",
     },
   );
@@ -254,6 +261,35 @@ export function ExpenseForm({
           </p>
         </div>
       )}
+
+      <label className="flex cursor-pointer items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--border)] p-3">
+        <input
+          type="checkbox"
+          className="h-4 w-4"
+          checked={!!values.paidWithCash}
+          onChange={(e) => set("paidWithCash", e.target.checked)}
+        />
+        <span className="flex-1">
+          <span className="block text-sm font-semibold">💵 ¿Pagaste con efectivo?</span>
+          <span className="block text-xs text-[var(--text-muted)]">
+            Descuenta el monto del control de efectivo de {users.find((u) => u.id === values.paidById)?.name}.
+          </span>
+        </span>
+      </label>
+
+      {values.paidWithCash &&
+        (() => {
+          const payerBalance = cashBalances?.find((c) => c.userId === values.paidById)?.balance;
+          if (payerBalance === undefined) return null;
+          const after = round2(payerBalance - values.amount);
+          return (
+            <p className={`text-xs ${after < 0 ? "text-critical" : "text-[var(--text-muted)]"}`}>
+              Efectivo de {users.find((u) => u.id === values.paidById)?.name}: {formatMoney(payerBalance)} →{" "}
+              {formatMoney(after)} después de este gasto
+              {after < 0 ? " ⚠️ quedaría en negativo" : ""}
+            </p>
+          );
+        })()}
 
       <div>
         <label className="label" htmlFor="expense-notes">

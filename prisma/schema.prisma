@@ -25,6 +25,7 @@ model User {
   expenseShares      ExpenseShare[]
   budgets            Budget[]
   goalContributions  GoalContribution[]
+  cashMovements      CashMovement[]
 }
 
 /// Ingresos individuales.
@@ -61,6 +62,7 @@ model Expense {
   date        DateTime
   isShared    Boolean  @default(false)
   splitType   String   @default("NONE") // NONE | EQUAL | CUSTOM
+  paidWithCash Boolean @default(false) // true = se pagó con efectivo (descuenta del control de efectivo de paidById)
   notes       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -132,6 +134,28 @@ model GoalContribution {
 
   @@index([goalId])
   @@index([userId])
+}
+
+/// Movimientos de efectivo en mano (retiros o ajustes manuales), separados
+/// de Ingresos/Gastos porque un retiro es una transferencia (el dinero
+/// sigue siendo tuyo, solo cambia de la cuenta al bolsillo) y no debe
+/// alterar los totales de ingresos/gastos/balance de la app.
+/// amount positivo = entra efectivo (ej. un retiro de cajero).
+/// amount negativo = sale efectivo sin ser un gasto registrado (ej. lo
+/// depositaste de vuelta al banco, o un ajuste porque el conteo no cuadró).
+/// El efectivo también baja automáticamente cuando un Expense se marca
+/// con paidWithCash = true (ver Expense).
+model CashMovement {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Float
+  description String
+  date        DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([date])
 }
 
 /// Configuración general de la aplicación (fila única).

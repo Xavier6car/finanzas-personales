@@ -98,7 +98,13 @@ información: no hay datos privados entre Xavier y Camila.
 - **Gastos** — registro con categoría, descripción (obligatoria), monto y
   fecha. Puede marcarse como **compartido** con división **50/50** o
   **personalizada** (valida que la suma coincida con el total). Se distingue
-  siempre "quién pagó" de "a quién corresponde" cada parte.
+  siempre "quién pagó" de "a quién corresponde" cada parte. Se puede marcar
+  un gasto como **pagado en efectivo**, lo que descuenta automáticamente
+  del control de efectivo de quien pagó.
+- **Efectivo** — control de la plata en mano de cada persona, separado del
+  balance general: un retiro (o un ajuste manual) no es ingreso ni gasto,
+  es solo una transferencia entre la cuenta y el bolsillo. Se descuenta
+  solo cuando un gasto se marca como pagado en efectivo.
 - **Historial** — todos los movimientos (ingresos + gastos) con filtros por
   persona, tipo, categoría, mes, rango de fechas, compartidos y texto de
   búsqueda; orden por fecha o monto; editar/eliminar.

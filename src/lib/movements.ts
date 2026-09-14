@@ -17,6 +17,7 @@ export interface ExpenseLike {
   date: Date;
   isShared: boolean;
   splitType: string;
+  paidWithCash: boolean;
   shares: { userId: string; amount: number }[];
 }
 
@@ -29,6 +30,7 @@ export interface Movement {
   description: string;
   amount: number;
   isShared: boolean;
+  paidWithCash?: boolean;
   shares?: { userId: string; amount: number }[];
   source: IncomeLike | ExpenseLike;
 }
@@ -55,6 +57,7 @@ export function buildMovements(incomes: IncomeLike[], expenses: ExpenseLike[]): 
     description: e.description,
     amount: e.amount,
     isShared: e.isShared,
+    paidWithCash: e.paidWithCash,
     shares: e.shares,
     source: e,
   }));
