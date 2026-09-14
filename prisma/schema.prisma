@@ -1,12 +1,13 @@
 // Prisma schema — Finanzas compartidas (Xavier & Camila)
-// SQLite como motor de base de datos: simple, basado en archivo, ideal para 2 usuarios.
+// PostgreSQL como motor de base de datos: necesario para desplegar en la web
+// (Vercel/Neon), donde no hay un disco persistente para un archivo SQLite.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

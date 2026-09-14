@@ -8,18 +8,21 @@ ambos. Responsive, instalable como PWA, sin correos ni contraseñas.
 ## Stack técnico
 
 - **Next.js 16** (App Router, Server Actions, TypeScript)
-- **Prisma 5 + SQLite** — base de datos basada en archivo, simple de operar para 2 usuarios
+- **Prisma 5 + PostgreSQL** — para poder desplegarse en hostings sin disco persistente (Vercel, etc.)
 - **Tailwind CSS 4** — sistema de diseño propio con tokens light/dark
 - **Recharts** — gráficos (barras, líneas) con paleta accesible/daltonismo-safe
 - **bcryptjs** — hash del PIN opcional (sin contraseñas de verdad, sin correos)
 - Service Worker + Web App Manifest → instalable como PWA
 
-## Puesta en marcha
+## Puesta en marcha (local)
+
+Necesitas una base de datos PostgreSQL (local o gratis en la nube, ver
+[Neon](https://neon.tech)).
 
 ```bash
 npm install
-cp .env.example .env          # define DATABASE_URL (SQLite por defecto)
-npx prisma migrate dev        # crea la base de datos y las tablas
+cp .env.example .env          # pega tu DATABASE_URL de Postgres
+npm run db:push               # crea las tablas a partir del esquema
 npm run db:seed               # crea los usuarios Xavier y Camila
 npm run dev                   # http://localhost:3000
 ```
@@ -32,9 +35,51 @@ Scripts útiles:
 | `npm run build`       | Build de producción                             |
 | `npm run start`       | Sirve el build de producción                    |
 | `npm run lint`        | ESLint                                          |
-| `npm run db:migrate`  | Nueva migración de Prisma                       |
+| `npm run db:push`     | Sincroniza las tablas con `prisma/schema.prisma` |
 | `npm run db:seed`     | (Re)crea los usuarios Xavier y Camila            |
 | `npm run db:studio`   | Explorador visual de la base de datos            |
+
+## Publicarla en la web (para entrar desde cualquier navegador/celular)
+
+La combinación más simple y gratuita es **Vercel** (hosting, hecho por los
+creadores de Next.js) + **Neon** (Postgres gratis en la nube). Son ~10
+minutos, sin tarjeta de crédito:
+
+1. **Base de datos — [neon.tech](https://neon.tech)**
+   - Crea una cuenta gratis (puedes usar tu cuenta de GitHub).
+   - "Create a project" → cualquier nombre y región.
+   - En el dashboard del proyecto, copia el **Connection string** (el que
+     dice "Pooled connection"). Se ve así:
+     `postgresql://usuario:password@ep-algo-pooler.region.aws.neon.tech/neondb?sslmode=require`
+
+2. **Hosting — [vercel.com](https://vercel.com)**
+   - Crea una cuenta gratis con tu mismo GitHub.
+   - "Add New…" → "Project" → importa el repositorio
+     `Xavier6car/finanzas-personales`.
+   - En "Environment Variables" agrega:
+     - `DATABASE_URL` = el connection string de Neon del paso 1.
+   - Click en **Deploy**. Cuando termine, Vercel te da una URL como
+     `https://finanzas-personales-xxxx.vercel.app` — esa es la que abren
+     Xavier y Camila desde cualquier navegador o celular.
+
+3. **Crear las tablas y los usuarios en la base de producción** (una sola
+   vez). Desde tu computadora, con el repo clonado:
+   ```bash
+   npm install
+   echo 'DATABASE_URL="<el connection string de Neon>"' > .env
+   npm run db:push
+   npm run db:seed
+   ```
+   (También puedo hacer este paso yo si me compartes el connection string
+   de Neon en el chat.)
+
+4. Listo — recarga la URL de Vercel y ya debería aparecer la pantalla
+   "¿Quién eres?". Cada vez que se haga `git push` a esta rama, Vercel
+   vuelve a desplegar automáticamente.
+
+> Si prefieres otro hosting (Netlify, Railway, tu propio servidor, etc.) el
+> único requisito es exponer la variable `DATABASE_URL` apuntando a un
+> Postgres accesible desde ahí; el resto del proyecto es un Next.js estándar.
 
 ## Cómo funciona el acceso
 
@@ -83,7 +128,6 @@ información: no hay datos privados entre Xavier y Camila.
 - El Service Worker cachea únicamente el "app shell" (íconos, manifest,
   página de respaldo offline): los datos financieros requieren conexión, ya
   que viven en la base de datos vía Server Actions.
-- SQLite es ideal para uso personal de 2 personas; para desplegar en un
-  entorno con múltiples instancias del servidor, cambia `DATABASE_URL` a
-  Postgres/MySQL y ajusta el `provider` en `prisma/schema.prisma` (el resto
-  del código no depende del motor).
+- El esquema usa `prisma db push` en lugar de migraciones versionadas, por
+  simplicidad para una app de 2 usuarios. Si el proyecto crece, se puede
+  migrar a `prisma migrate` sin cambiar el resto del código.
