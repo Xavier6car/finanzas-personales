@@ -37,8 +37,8 @@ export function AppShell({
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Sidebar desktop */}
-      <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r border-[var(--border)] bg-surface-1 p-4 md:sticky md:top-0 md:flex md:h-screen">
+      {/* Sidebar desktop — fixed (no sticky) para no depender de la altura de sus hermanos en el flex */}
+      <aside className="hidden w-64 flex-col overflow-y-auto border-r border-[var(--border)] bg-surface-1 p-4 md:fixed md:inset-y-0 md:left-0 md:flex md:z-20">
         <Brand />
         <nav className="mt-6 flex flex-1 flex-col gap-1">
           {NAV_ITEMS.map((item) => (
@@ -60,7 +60,7 @@ export function AppShell({
       </aside>
 
       {/* Topbar mobile */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col md:ml-64">
         <header className="flex items-center justify-between border-b border-[var(--border)] bg-surface-1 px-4 py-3 md:hidden">
           <button
             aria-label="Abrir menú"
