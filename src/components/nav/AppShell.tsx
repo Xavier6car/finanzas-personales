@@ -37,7 +37,7 @@ export function AppShell({
   return (
     <div className="flex min-h-screen w-full">
       {/* Sidebar desktop */}
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-[var(--border)] bg-surface-1 p-4 md:flex">
+      <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r border-[var(--border)] bg-surface-1 p-4 md:sticky md:top-0 md:flex md:h-screen">
         <Brand />
         <nav className="mt-6 flex flex-1 flex-col gap-1">
           {NAV_ITEMS.map((item) => (
