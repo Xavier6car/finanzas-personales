@@ -1,8 +1,9 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { SESSION_COOKIE } from "@/lib/session-cookie";
 
-export const SESSION_COOKIE = "fp_session";
+export { SESSION_COOKIE };
 
 export async function getCurrentUser() {
   const jar = await cookies();

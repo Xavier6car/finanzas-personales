@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE } from "@/lib/auth";
+import { SESSION_COOKIE } from "@/lib/session-cookie";
 
 const PUBLIC_PATHS = ["/quien-eres", "/manifest.webmanifest", "/sw.js"];
 
