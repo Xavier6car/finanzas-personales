@@ -1,0 +1,142 @@
+// Prisma schema — Finanzas compartidas (Xavier & Camila)
+// SQLite como motor de base de datos: simple, basado en archivo, ideal para 2 usuarios.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Los dos únicos usuarios de la aplicación.
+model User {
+  id        String   @id @default(cuid())
+  name      String   @unique // "Xavier" | "Camila"
+  color     String   @default("#6366f1")
+  pinHash   String? // PIN opcional de 4 dígitos, hasheado con bcrypt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  incomes            Income[]
+  expensesPaid       Expense[]         @relation("PaidBy")
+  expenseShares      ExpenseShare[]
+  budgets            Budget[]
+  goalContributions  GoalContribution[]
+}
+
+/// Ingresos individuales.
+model Income {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String // Sueldo | Honorarios | Bonificación | Comisiones | Ingresos extraordinarios | Otros
+  description String
+  amount      Float
+  currency    String   @default("USD")
+  date        DateTime
+  account     String? // Cuenta o medio donde se recibió (opcional)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([date])
+}
+
+/// Gastos individuales o compartidos.
+/// `paidById` = quién realmente pagó/desembolsó el dinero.
+/// La pertenencia (a quién corresponde el gasto) vive en ExpenseShare,
+/// para no confundir "quién pagó" con "a quién pertenece el gasto".
+model Expense {
+  id          String   @id @default(cuid())
+  paidById    String
+  paidBy      User     @relation("PaidBy", fields: [paidById], references: [id], onDelete: Cascade)
+  category    String
+  description String
+  amount      Float
+  currency    String   @default("USD")
+  date        DateTime
+  isShared    Boolean  @default(false)
+  splitType   String   @default("NONE") // NONE | EQUAL | CUSTOM
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  shares ExpenseShare[]
+
+  @@index([paidById])
+  @@index([date])
+  @@index([category])
+}
+
+/// A quién corresponde cada porción de un gasto.
+/// Para gastos no compartidos hay una sola fila == monto total, con userId == paidById.
+/// Para gastos compartidos hay una fila por persona con su porción.
+model ExpenseShare {
+  id        String  @id @default(cuid())
+  expenseId String
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Float
+
+  @@unique([expenseId, userId])
+  @@index([userId])
+}
+
+/// Presupuestos mensuales por categoría, persona o conjunto.
+model Budget {
+  id       String  @id @default(cuid())
+  category String
+  month    String // formato "YYYY-MM"
+  amount   Float
+  scope    String // PERSON | SHARED
+  userId   String? // null cuando scope == SHARED
+  user     User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([category, month, scope, userId])
+  @@index([month])
+}
+
+/// Metas de ahorro compartidas o individuales.
+model SavingsGoal {
+  id           String   @id @default(cuid())
+  name         String
+  targetAmount Float
+  targetDate   DateTime?
+  icon         String   @default("🎯")
+  archived     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  contributions GoalContribution[]
+}
+
+/// Aportes de cada persona a una meta de ahorro.
+model GoalContribution {
+  id        String      @id @default(cuid())
+  goalId    String
+  goal      SavingsGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Float
+  date      DateTime
+  note      String?
+  createdAt DateTime    @default(now())
+
+  @@index([goalId])
+  @@index([userId])
+}
+
+/// Configuración general de la aplicación (fila única).
+model AppSettings {
+  id              String @id @default("singleton")
+  settlementMode  String @default("REEMBOLSO") // REEMBOLSO | PRESUPUESTO
+  requirePin      Boolean @default(false)
+  updatedAt       DateTime @updatedAt
+}
