@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, Minus } from "@phosphor-icons/react";
 import { createCashMovement } from "@/actions/cash";
 import { formatDateInput } from "@/lib/format";
 
@@ -74,14 +75,14 @@ export function CashMovementForm({
             className={`btn flex-1 ${direction === "in" ? "btn-primary" : "btn-secondary"}`}
             onClick={() => setDirection("in")}
           >
-            ➕ Retiro (agrega efectivo)
+            <Plus size={16} weight="bold" /> Retiro (agrega efectivo)
           </button>
           <button
             type="button"
             className={`btn flex-1 ${direction === "out" ? "btn-primary" : "btn-secondary"}`}
             onClick={() => setDirection("out")}
           >
-            ➖ Ajuste (quita efectivo)
+            <Minus size={16} weight="bold" /> Ajuste (quita efectivo)
           </button>
         </div>
         <p className="mt-1 text-xs text-[var(--text-muted)]">

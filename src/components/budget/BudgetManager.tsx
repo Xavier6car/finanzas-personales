@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CaretLeft, CaretRight, Plus, Warning } from "@phosphor-icons/react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmButton } from "@/components/ui/ConfirmButton";
 import { BudgetForm, type BudgetFormValues } from "@/components/budget/BudgetForm";
@@ -52,11 +53,11 @@ export function BudgetManager({
         <h1 className="text-xl font-bold">Presupuestos</h1>
         <div className="flex items-center gap-2">
           <button className="btn btn-secondary !px-2" onClick={() => changeMonth(-1)} aria-label="Mes anterior">
-            ←
+            <CaretLeft size={16} weight="bold" />
           </button>
           <span className="min-w-[9rem] text-center text-sm font-semibold capitalize">{formatMonthLabel(month)}</span>
           <button className="btn btn-secondary !px-2" onClick={() => changeMonth(1)} aria-label="Mes siguiente">
-            →
+            <CaretRight size={16} weight="bold" />
           </button>
           <button
             className="btn btn-primary ml-2"
@@ -65,7 +66,7 @@ export function BudgetManager({
               setOpen(true);
             }}
           >
-            + Nuevo
+            <Plus size={16} weight="bold" /> Nuevo
           </button>
         </div>
       </div>
@@ -158,10 +159,12 @@ export function BudgetManager({
                 </div>
 
                 {b.percent >= 100 ? (
-                  <p className="mt-1 text-xs font-medium text-critical">⚠️ Presupuesto superado.</p>
+                  <p className="mt-1 flex items-center gap-1 text-xs font-medium text-critical">
+                    <Warning size={13} weight="bold" /> Presupuesto superado.
+                  </p>
                 ) : b.percent >= 80 ? (
-                  <p className="mt-1 text-xs font-medium" style={{ color: "var(--warning)" }}>
-                    ⚠️ Cerca del límite ({formatMoney(b.remaining)} disponible).
+                  <p className="mt-1 flex items-center gap-1 text-xs font-medium" style={{ color: "var(--warning)" }}>
+                    <Warning size={13} weight="bold" /> Cerca del límite ({formatMoney(b.remaining)} disponible).
                   </p>
                 ) : (
                   <p className="mt-1 text-xs text-[var(--text-muted)]">{formatMoney(b.remaining)} disponible</p>

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Handshake, ChartBar, ArrowsClockwise } from "@phosphor-icons/react";
 import { setUserPin, setRequirePin, setSettlementMode, logout } from "@/actions/auth";
 
 interface UserOption {
@@ -121,7 +122,7 @@ export function SettingsForm({
               })
             }
           >
-            🤝 Control de reembolsos
+            <Handshake size={16} weight="bold" /> Control de reembolsos
           </button>
           <button
             className={`btn flex-1 ${settlementMode === "PRESUPUESTO" ? "btn-primary" : "btn-secondary"}`}
@@ -132,7 +133,7 @@ export function SettingsForm({
               })
             }
           >
-            📊 Solo control presupuestario
+            <ChartBar size={16} weight="bold" /> Solo control presupuestario
           </button>
         </div>
         <p className="mt-2 text-xs text-[var(--text-muted)]">
@@ -146,7 +147,7 @@ export function SettingsForm({
         <h2 className="mb-1 font-semibold">Sesión</h2>
         <form action={logout}>
           <button type="submit" className="btn btn-secondary">
-            🔁 Cambiar de usuario
+            <ArrowsClockwise size={16} weight="bold" /> Cambiar de usuario
           </button>
         </form>
       </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, Minus, Receipt } from "@phosphor-icons/react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmButton } from "@/components/ui/ConfirmButton";
 import { CashMovementForm } from "@/components/cash/CashMovementForm";
@@ -36,7 +37,7 @@ export function CashManager({
           </p>
         </div>
         <button className="btn btn-primary shrink-0" onClick={() => setOpen(true)}>
-          + Movimiento
+          <Plus size={16} weight="bold" /> Movimiento
         </button>
       </div>
 
@@ -68,7 +69,15 @@ export function CashManager({
               <ul className="max-h-96 divide-y divide-[var(--border)] overflow-y-auto scrollbar-thin">
                 {b.ledger.map((entry) => (
                   <li key={`${entry.kind}-${entry.id}`} className="flex items-center gap-3 p-3 text-sm">
-                    <span aria-hidden>{entry.kind === "expense" ? "🧾" : entry.amount >= 0 ? "➕" : "➖"}</span>
+                    <span aria-hidden className="shrink-0 text-[var(--text-muted)]">
+                      {entry.kind === "expense" ? (
+                        <Receipt size={17} weight="bold" />
+                      ) : entry.amount >= 0 ? (
+                        <Plus size={17} weight="bold" />
+                      ) : (
+                        <Minus size={17} weight="bold" />
+                      )}
+                    </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate">{entry.description}</p>
                       <p className="text-xs text-[var(--text-muted)]">

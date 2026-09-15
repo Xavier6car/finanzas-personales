@@ -3,18 +3,34 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  House,
+  CurrencyDollar,
+  Receipt,
+  Wallet,
+  ClockCounterClockwise,
+  ChartBar,
+  Target,
+  Handshake,
+  GearSix,
+  List,
+  X,
+  ArrowsClockwise,
+  Plus,
+  type Icon,
+} from "@phosphor-icons/react";
 import { logout } from "@/actions/auth";
 
-const NAV_ITEMS = [
-  { href: "/", label: "Inicio", icon: "🏠" },
-  { href: "/ingresos", label: "Ingresos", icon: "💵" },
-  { href: "/gastos", label: "Gastos", icon: "🧾" },
-  { href: "/efectivo", label: "Efectivo", icon: "💰" },
-  { href: "/historial", label: "Historial", icon: "📜" },
-  { href: "/presupuestos", label: "Presupuestos", icon: "📊" },
-  { href: "/metas", label: "Metas de ahorro", icon: "🎯" },
-  { href: "/saldos", label: "Saldos entre nosotros", icon: "🤝" },
-  { href: "/ajustes", label: "Ajustes", icon: "⚙️" },
+const NAV_ITEMS: { href: string; label: string; icon: Icon }[] = [
+  { href: "/", label: "Inicio", icon: House },
+  { href: "/ingresos", label: "Ingresos", icon: CurrencyDollar },
+  { href: "/gastos", label: "Gastos", icon: Receipt },
+  { href: "/efectivo", label: "Efectivo", icon: Wallet },
+  { href: "/historial", label: "Historial", icon: ClockCounterClockwise },
+  { href: "/presupuestos", label: "Presupuestos", icon: ChartBar },
+  { href: "/metas", label: "Metas de ahorro", icon: Target },
+  { href: "/saldos", label: "Saldos entre nosotros", icon: Handshake },
+  { href: "/ajustes", label: "Ajustes", icon: GearSix },
 ];
 
 const MOBILE_PRIMARY = ["/", "/ingresos", "/gastos", "/historial"];
@@ -51,7 +67,7 @@ export function AppShell({
                   : "text-[var(--text-secondary)] hover:bg-surface-2"
               }`}
             >
-              <span aria-hidden>{item.icon}</span>
+              <item.icon size={19} weight={isActive(item.href) ? "fill" : "regular"} aria-hidden />
               {item.label}
             </Link>
           ))}
@@ -67,7 +83,7 @@ export function AppShell({
             className="btn btn-ghost !px-2"
             onClick={() => setDrawerOpen(true)}
           >
-            <span className="text-xl">☰</span>
+            <List size={22} />
           </button>
           <Brand compact />
           <span
@@ -96,7 +112,7 @@ export function AppShell({
             <div className="mb-4 flex items-center justify-between">
               <Brand />
               <button className="btn btn-ghost !px-2" onClick={() => setDrawerOpen(false)} aria-label="Cerrar">
-                ✕
+                <X size={20} />
               </button>
             </div>
             <nav className="flex flex-1 flex-col gap-1">
@@ -109,7 +125,7 @@ export function AppShell({
                     isActive(item.href) ? "bg-brand text-white" : "text-[var(--text-secondary)] hover:bg-surface-2"
                   }`}
                 >
-                  <span aria-hidden>{item.icon}</span>
+                  <item.icon size={19} weight={isActive(item.href) ? "fill" : "regular"} aria-hidden />
                   {item.label}
                 </Link>
               ))}
@@ -129,9 +145,7 @@ export function AppShell({
               isActive(item.href) ? "text-brand" : "text-[var(--text-muted)]"
             }`}
           >
-            <span className="text-lg" aria-hidden>
-              {item.icon}
-            </span>
+            <item.icon size={21} weight={isActive(item.href) ? "fill" : "regular"} aria-hidden />
             <span className="w-full truncate text-center">{item.label}</span>
           </Link>
         ))}
@@ -139,9 +153,7 @@ export function AppShell({
           className="flex min-w-0 flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium text-[var(--text-muted)]"
           onClick={() => setDrawerOpen(true)}
         >
-          <span className="text-lg" aria-hidden>
-            ⋯
-          </span>
+          <List size={21} aria-hidden />
           <span className="w-full truncate text-center">Más</span>
         </button>
       </nav>
@@ -157,7 +169,7 @@ export function AppShell({
                 router.push("/ingresos?nuevo=1");
               }}
             >
-              💵 Nuevo ingreso
+              <CurrencyDollar size={18} weight="bold" /> Nuevo ingreso
             </button>
             <button
               className="btn btn-primary shadow-lg"
@@ -166,16 +178,16 @@ export function AppShell({
                 router.push("/gastos?nuevo=1");
               }}
             >
-              🧾 Nuevo gasto
+              <Receipt size={18} weight="bold" /> Nuevo gasto
             </button>
           </div>
         )}
         <button
           aria-label="Agregar movimiento"
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-brand text-2xl text-white shadow-lg transition hover:opacity-90"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-brand text-white shadow-lg transition hover:opacity-90"
           onClick={() => setFabOpen((v) => !v)}
         >
-          {fabOpen ? "✕" : "+"}
+          {fabOpen ? <X size={26} /> : <Plus size={26} weight="bold" />}
         </button>
       </div>
     </div>
@@ -214,7 +226,7 @@ function UserSwitcher({
       </div>
       <form action={logout}>
         <button type="submit" className="btn btn-ghost w-full justify-start !px-2 text-sm">
-          🔁 Cambiar de usuario
+          <ArrowsClockwise size={16} weight="bold" /> Cambiar de usuario
         </button>
       </form>
     </div>

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { X } from "@phosphor-icons/react";
 
 export function Modal({
   open,
@@ -34,7 +35,7 @@ export function Modal({
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold">{title}</h2>
           <button aria-label="Cerrar" className="btn btn-ghost !px-2" onClick={onClose}>
-            ✕
+            <X size={18} />
           </button>
         </div>
         {children}

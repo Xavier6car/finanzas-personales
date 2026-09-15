@@ -1,4 +1,15 @@
 import { prisma } from "@/lib/prisma";
+import {
+  CurrencyDollar,
+  House,
+  Receipt,
+  Handshake,
+  TrendDown,
+  Scales,
+  Bank,
+  Wallet,
+  Percent,
+} from "@phosphor-icons/react/dist/ssr";
 import { getDashboardData } from "@/lib/dashboard-data";
 import { getCashBalances } from "@/lib/cash-data";
 import { getRangeForPeriod, type PeriodKey } from "@/lib/period";
@@ -57,39 +68,39 @@ export default async function DashboardPage({
         {personId === "all" ? (
           <>
             {data.perPerson.map((p) => (
-              <StatCard key={p.userId} label={`Ingresos · ${p.name}`} value={formatMoney(p.incomes)} tone="good" icon="💵" />
+              <StatCard key={p.userId} label={`Ingresos · ${p.name}`} value={formatMoney(p.incomes)} tone="good" icon={CurrencyDollar} />
             ))}
-            <StatCard label="Ingresos del hogar" value={formatMoney(data.totals.incomesHousehold)} tone="good" icon="🏡" />
+            <StatCard label="Ingresos del hogar" value={formatMoney(data.totals.incomesHousehold)} tone="good" icon={House} />
 
             {data.perPerson.map((p) => (
-              <StatCard key={p.userId + "-e"} label={`Gastos · ${p.name}`} value={formatMoney(p.expenses)} tone="critical" icon="🧾" />
+              <StatCard key={p.userId + "-e"} label={`Gastos · ${p.name}`} value={formatMoney(p.expenses)} tone="critical" icon={Receipt} />
             ))}
-            <StatCard label="Gastos compartidos" value={formatMoney(data.totals.sharedExpenses)} icon="🤝" />
+            <StatCard label="Gastos compartidos" value={formatMoney(data.totals.sharedExpenses)} icon={Handshake} />
           </>
         ) : (
           <>
-            <StatCard label={`Ingresos · ${selectedPerson?.name}`} value={formatMoney(data.totals.incomesHousehold)} tone="good" icon="💵" />
-            <StatCard label={`Gastos · ${selectedPerson?.name}`} value={formatMoney(data.totals.expensesHousehold)} tone="critical" icon="🧾" />
-            <StatCard label="Su parte de gastos compartidos" value={formatMoney(data.totals.sharedExpenses)} icon="🤝" />
+            <StatCard label={`Ingresos · ${selectedPerson?.name}`} value={formatMoney(data.totals.incomesHousehold)} tone="good" icon={CurrencyDollar} />
+            <StatCard label={`Gastos · ${selectedPerson?.name}`} value={formatMoney(data.totals.expensesHousehold)} tone="critical" icon={Receipt} />
+            <StatCard label="Su parte de gastos compartidos" value={formatMoney(data.totals.sharedExpenses)} icon={Handshake} />
           </>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Gastos generales" value={formatMoney(data.totals.expensesHousehold)} icon="📉" />
+        <StatCard label="Gastos generales" value={formatMoney(data.totals.expensesHousehold)} icon={TrendDown} />
         <StatCard
           label="Balance del período"
           value={formatMoney(totalBalance)}
           tone={totalBalance >= 0 ? "good" : "critical"}
-          icon="⚖️"
+          icon={Scales}
         />
-        <StatCard label="Ahorro acumulado" value={formatMoney(bankSavings)} icon="🏦" />
-        <StatCard label="Efectivo disponible" value={formatMoney(totalCash)} tone={totalCash < 0 ? "critical" : "default"} icon="💰" />
+        <StatCard label="Ahorro acumulado" value={formatMoney(bankSavings)} icon={Bank} />
+        <StatCard label="Efectivo disponible" value={formatMoney(totalCash)} tone={totalCash < 0 ? "critical" : "default"} icon={Wallet} />
         <StatCard
           label="% de ingresos gastado"
           value={formatPercent(data.totals.percentSpent)}
           tone={data.totals.percentSpent > 90 ? "critical" : "default"}
-          icon="📐"
+          icon={Percent}
         />
       </div>
 

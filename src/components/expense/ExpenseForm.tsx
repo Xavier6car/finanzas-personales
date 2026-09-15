@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { CurrencyDollar, Check, Warning, ArrowRight } from "@phosphor-icons/react";
 import { createExpense, updateExpense, type ExpenseInput } from "@/actions/expense";
 import { EXPENSE_CATEGORIES, IVA_RATE, ISD_RATE } from "@/lib/constants";
 import { formatDateInput, formatMoney } from "@/lib/format";
@@ -318,10 +319,14 @@ export function ExpenseForm({
                   />
                 </div>
               ))}
-              <p className={`text-xs ${Math.abs(customDiff) < 0.01 ? "text-good" : "text-critical"}`}>
-                {Math.abs(customDiff) < 0.01
-                  ? "✓ La suma coincide con el monto total."
-                  : `Diferencia: ${formatMoney(customDiff)} ${customDiff > 0 ? "por asignar" : "de más"}`}
+              <p className={`flex items-center gap-1 text-xs ${Math.abs(customDiff) < 0.01 ? "text-good" : "text-critical"}`}>
+                {Math.abs(customDiff) < 0.01 ? (
+                  <>
+                    <Check size={13} weight="bold" /> La suma coincide con el monto total.
+                  </>
+                ) : (
+                  `Diferencia: ${formatMoney(customDiff)} ${customDiff > 0 ? "por asignar" : "de más"}`
+                )}
               </p>
             </div>
           )}
@@ -340,7 +345,9 @@ export function ExpenseForm({
           onChange={(e) => set("paidWithCash", e.target.checked)}
         />
         <span className="flex-1">
-          <span className="block text-sm font-semibold">💵 ¿Pagaste con efectivo?</span>
+          <span className="flex items-center gap-1.5 text-sm font-semibold">
+            <CurrencyDollar size={15} weight="bold" /> ¿Pagaste con efectivo?
+          </span>
           <span className="block text-xs text-[var(--text-muted)]">
             Descuenta el monto del control de efectivo de {users.find((u) => u.id === values.paidById)?.name}.
           </span>
@@ -353,10 +360,14 @@ export function ExpenseForm({
           if (payerBalance === undefined) return null;
           const after = round2(payerBalance - effectiveAmount);
           return (
-            <p className={`text-xs ${after < 0 ? "text-critical" : "text-[var(--text-muted)]"}`}>
-              Efectivo de {users.find((u) => u.id === values.paidById)?.name}: {formatMoney(payerBalance)} →{" "}
-              {formatMoney(after)} después de este gasto
-              {after < 0 ? " ⚠️ quedaría en negativo" : ""}
+            <p className={`flex flex-wrap items-center gap-1 text-xs ${after < 0 ? "text-critical" : "text-[var(--text-muted)]"}`}>
+              Efectivo de {users.find((u) => u.id === values.paidById)?.name}: {formatMoney(payerBalance)}{" "}
+              <ArrowRight size={12} weight="bold" /> {formatMoney(after)} después de este gasto
+              {after < 0 && (
+                <span className="flex items-center gap-1">
+                  <Warning size={12} weight="bold" /> quedaría en negativo
+                </span>
+              )}
             </p>
           );
         })()}

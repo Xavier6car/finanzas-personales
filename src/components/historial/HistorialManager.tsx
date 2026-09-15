@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CaretUp, CaretDown, Handshake, CurrencyDollar, Clock, CheckCircle } from "@phosphor-icons/react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmButton } from "@/components/ui/ConfirmButton";
 import { Select } from "@/components/ui/Select";
@@ -212,14 +213,14 @@ export function HistorialManager({
 
       <div className="card overflow-hidden">
         <div className="hidden grid-cols-[90px_1fr_140px_110px_100px_170px] gap-2 border-b border-[var(--border)] px-4 py-2 text-xs font-semibold text-[var(--text-muted)] sm:grid">
-          <button className="text-left" onClick={() => toggleSort("date")}>
-            Fecha {sortField === "date" && (sortDir === "asc" ? "↑" : "↓")}
+          <button className="flex items-center gap-1 text-left" onClick={() => toggleSort("date")}>
+            Fecha {sortField === "date" && (sortDir === "asc" ? <CaretUp size={12} weight="bold" /> : <CaretDown size={12} weight="bold" />)}
           </button>
           <span>Descripción</span>
           <span>Categoría</span>
           <span>Persona</span>
-          <button className="text-right" onClick={() => toggleSort("amount")}>
-            Monto {sortField === "amount" && (sortDir === "asc" ? "↑" : "↓")}
+          <button className="flex items-center justify-end gap-1 text-right" onClick={() => toggleSort("amount")}>
+            Monto {sortField === "amount" && (sortDir === "asc" ? <CaretUp size={12} weight="bold" /> : <CaretDown size={12} weight="bold" />)}
           </button>
           <span className="text-right">Acciones</span>
         </div>
@@ -238,15 +239,25 @@ export function HistorialManager({
                   <span className="text-xs text-[var(--text-muted)] sm:text-sm">{formatDate(m.date)}</span>
                   <span className="min-w-0 truncate font-medium">
                     {m.description}
-                    {m.isShared && <span className="pill ml-2">🤝 Compartido</span>}
-                    {m.paidWithCash && <span className="pill ml-2">💵 Efectivo</span>}
+                    {m.isShared && (
+                      <span className="pill ml-2">
+                        <Handshake size={12} weight="bold" /> Compartido
+                      </span>
+                    )}
+                    {m.paidWithCash && (
+                      <span className="pill ml-2">
+                        <CurrencyDollar size={12} weight="bold" /> Efectivo
+                      </span>
+                    )}
                     {m.reimbursementStatus === "PENDING" && (
                       <span className="pill ml-2" style={{ color: "var(--warning)" }}>
-                        ⏳ Pendiente de reembolso
+                        <Clock size={12} weight="bold" /> Pendiente de reembolso
                       </span>
                     )}
                     {m.reimbursementStatus === "REIMBURSED" && (
-                      <span className="pill ml-2 text-good">✅ Reembolsado</span>
+                      <span className="pill ml-2 text-good">
+                        <CheckCircle size={12} weight="bold" /> Reembolsado
+                      </span>
                     )}
                   </span>
                   <span className="text-sm text-[var(--text-secondary)]">

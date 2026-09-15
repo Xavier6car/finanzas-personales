@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Lock } from "@phosphor-icons/react";
 import { loginAsUser } from "@/actions/auth";
 
 interface UserOption {
@@ -101,7 +102,7 @@ export function UserPicker({
               <span className="block text-xs text-[var(--text-muted)]">Última sesión en este dispositivo</span>
             )}
           </span>
-          {requirePin && user.hasPin && <span className="text-lg">🔒</span>}
+          {requirePin && user.hasPin && <Lock size={18} className="text-[var(--text-muted)]" weight="bold" />}
         </button>
       ))}
       {error && <p className="text-sm text-critical">{error}</p>}

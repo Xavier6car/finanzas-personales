@@ -1,3 +1,4 @@
+import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { computeSettlement, type SharedExpenseLike } from "@/lib/settlement";
 import { categoryIcon } from "@/lib/constants";
 import { formatDate, formatMoney } from "@/lib/format";
@@ -85,7 +86,9 @@ export function SettlementView({
               <span className="font-bold text-brand">{formatMoney(result.settlement.amount)}</span> para saldar cuentas.
             </p>
           ) : (
-            <p className="text-lg font-medium text-good">✓ Están al día, no hay saldos pendientes.</p>
+            <p className="flex items-center justify-center gap-1.5 text-lg font-medium text-good">
+              <CheckCircle size={20} weight="bold" /> Están al día, no hay saldos pendientes.
+            </p>
           )}
         </div>
       )}
