@@ -6,6 +6,15 @@ function round2(n: number): number {
   return Math.round((n + Number.EPSILON) * 100) / 100;
 }
 
+export interface BudgetMovement {
+  id: string;
+  description: string;
+  date: string; // ISO
+  amount: number; // porción que cuenta para este presupuesto (share si es PERSON, total si es SHARED)
+  paidByName: string;
+  isShared: boolean;
+}
+
 export interface BudgetProgress {
   id: string;
   category: string;
@@ -16,6 +25,7 @@ export interface BudgetProgress {
   spent: number;
   remaining: number;
   percent: number;
+  movements: BudgetMovement[];
 }
 
 export async function getBudgetProgress(month: string): Promise<BudgetProgress[]> {
@@ -27,17 +37,40 @@ export async function getBudgetProgress(month: string): Promise<BudgetProgress[]
 
   const expenses = await prisma.expense.findMany({
     where: { date: { gte: start, lt: end } },
-    include: { shares: true },
+    include: { shares: true, paidBy: { select: { name: true } } },
+    orderBy: { date: "desc" },
   });
 
   return budgets.map((b) => {
+    const categoryExpenses = expenses.filter((e) => e.category === b.category);
+    const movements: BudgetMovement[] = [];
     let spent = 0;
     if (b.scope === "SHARED" || !b.userId) {
-      spent = expenses.filter((e) => e.category === b.category).reduce((acc, e) => acc + e.amount, 0);
+      for (const e of categoryExpenses) {
+        spent += e.amount;
+        movements.push({
+          id: e.id,
+          description: e.description,
+          date: e.date.toISOString(),
+          amount: round2(e.amount),
+          paidByName: e.paidBy.name,
+          isShared: e.isShared,
+        });
+      }
     } else {
-      spent = expenses
-        .filter((e) => e.category === b.category)
-        .reduce((acc, e) => acc + (e.shares.find((s) => s.userId === b.userId)?.amount ?? 0), 0);
+      for (const e of categoryExpenses) {
+        const share = e.shares.find((s) => s.userId === b.userId)?.amount ?? 0;
+        if (share === 0) continue;
+        spent += share;
+        movements.push({
+          id: e.id,
+          description: e.description,
+          date: e.date.toISOString(),
+          amount: round2(share),
+          paidByName: e.paidBy.name,
+          isShared: e.isShared,
+        });
+      }
     }
     spent = round2(spent);
     const remaining = round2(b.amount - spent);
@@ -52,6 +85,7 @@ export async function getBudgetProgress(month: string): Promise<BudgetProgress[]
       spent,
       remaining,
       percent,
+      movements,
     };
   });
 }
