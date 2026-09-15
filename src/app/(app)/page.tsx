@@ -24,6 +24,10 @@ export default async function DashboardPage({
   const range = getRangeForPeriod(period, start, end);
   const [data, cashBalances] = await Promise.all([getDashboardData(range), getCashBalances()]);
   const totalCash = cashBalances.reduce((a, b) => a + b.balance, 0);
+  // "Ahorro acumulado" (histórico ingresos-gastos) ya incorpora el efecto del
+  // efectivo; se resta aquí para mostrar solo el componente bancario.
+  const bankSavings = data.totals.cumulativeSavings - totalCash;
+  const totalBalance = bankSavings + totalCash;
 
   return (
     <div className="flex flex-col gap-6">
@@ -49,11 +53,11 @@ export default async function DashboardPage({
         <StatCard label="Gastos generales" value={formatMoney(data.totals.expensesHousehold)} icon="📉" />
         <StatCard
           label="Balance del período"
-          value={formatMoney(data.totals.cumulativeSavings + totalCash)}
-          tone={data.totals.cumulativeSavings + totalCash >= 0 ? "good" : "critical"}
+          value={formatMoney(totalBalance)}
+          tone={totalBalance >= 0 ? "good" : "critical"}
           icon="⚖️"
         />
-        <StatCard label="Ahorro acumulado" value={formatMoney(data.totals.cumulativeSavings - totalCash)} icon="🏦" />
+        <StatCard label="Ahorro acumulado" value={formatMoney(bankSavings)} icon="🏦" />
         <StatCard label="Efectivo disponible" value={formatMoney(totalCash)} tone={totalCash < 0 ? "critical" : "default"} icon="💰" />
         <StatCard
           label="% de ingresos gastado"
