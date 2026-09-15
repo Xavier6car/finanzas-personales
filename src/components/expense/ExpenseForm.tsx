@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createExpense, updateExpense, type ExpenseInput } from "@/actions/expense";
-import { EXPENSE_CATEGORIES } from "@/lib/constants";
+import { EXPENSE_CATEGORIES, IVA_RATE, ISD_RATE } from "@/lib/constants";
 import { formatDateInput, formatMoney } from "@/lib/format";
 
 interface UserOption {
@@ -36,6 +36,8 @@ export function ExpenseForm({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [hasCommission, setHasCommission] = useState(false);
+  const [commissionBase, setCommissionBase] = useState(0);
 
   const otherUsers = users;
   const defaultShares = users.map((u) => ({ userId: u.id, amount: 0 }));
@@ -59,21 +61,29 @@ export function ExpenseForm({
     setValues((v) => ({ ...v, [key]: value }));
   }
 
+  // Comisión bancaria (ej. débitos en el exterior): la comisión base se
+  // ingresa a mano porque varía por transacción, y el IVA/ISD se calculan
+  // automáticamente sobre esa comisión con las tasas vigentes.
+  const commissionIva = round2(commissionBase * IVA_RATE);
+  const commissionIsd = round2(commissionBase * ISD_RATE);
+  const commissionTotal = round2(commissionBase + commissionIva + commissionIsd);
+  const effectiveAmount = round2(values.amount + (hasCommission ? commissionTotal : 0));
+
   const equalShares = useMemo(() => {
     if (users.length !== 2) return [];
-    const half = Math.round((values.amount / 2 + Number.EPSILON) * 100) / 100;
-    const other = Math.round((values.amount - half + Number.EPSILON) * 100) / 100;
+    const half = Math.round((effectiveAmount / 2 + Number.EPSILON) * 100) / 100;
+    const other = Math.round((effectiveAmount - half + Number.EPSILON) * 100) / 100;
     return [
       { userId: users[0].id, amount: half },
       { userId: users[1].id, amount: other },
     ];
-  }, [users, values.amount]);
+  }, [users, effectiveAmount]);
 
   const customSum = useMemo(
     () => (values.customShares ?? []).reduce((acc, s) => acc + (s.amount || 0), 0),
     [values.customShares],
   );
-  const customDiff = Math.round((values.amount - customSum + Number.EPSILON) * 100) / 100;
+  const customDiff = Math.round((effectiveAmount - customSum + Number.EPSILON) * 100) / 100;
 
   function setCustomShare(userId: string, amount: number) {
     setValues((v) => ({
@@ -88,6 +98,7 @@ export function ExpenseForm({
 
     const payload: ExpenseInput = {
       ...values,
+      amount: effectiveAmount,
       splitType: values.isShared ? values.splitType : "NONE",
       customShares: values.isShared && values.splitType === "CUSTOM" ? values.customShares : undefined,
     };
@@ -190,6 +201,62 @@ export function ExpenseForm({
         <input
           type="checkbox"
           className="h-4 w-4"
+          checked={hasCommission}
+          onChange={(e) => setHasCommission(e.target.checked)}
+        />
+        <span className="flex-1">
+          <span className="block text-sm font-semibold">💳 ¿Tiene comisión bancaria (IVA/ISD)?</span>
+          <span className="block text-xs text-[var(--text-muted)]">
+            Para débitos con recargo (ej. pagos en el exterior). Ingresa la comisión base; el IVA (
+            {Math.round(IVA_RATE * 100)}%) y el ISD ({Math.round(ISD_RATE * 100)}%) se calculan solos y se suman al
+            monto del gasto.
+          </span>
+        </span>
+      </label>
+
+      {hasCommission && (
+        <div className="rounded-[var(--radius-sm)] border border-[var(--border)] p-3">
+          <label className="label" htmlFor="expense-commission-base">
+            Comisión (USD, sin impuestos)
+          </label>
+          <input
+            id="expense-commission-base"
+            type="number"
+            min={0}
+            step="0.01"
+            className="input"
+            value={commissionBase || ""}
+            onChange={(e) => setCommissionBase(parseFloat(e.target.value) || 0)}
+          />
+          <ul className="mt-3 space-y-1 text-sm">
+            <li className="flex justify-between text-[var(--text-muted)]">
+              <span>Comisión</span>
+              <span>{formatMoney(commissionBase)}</span>
+            </li>
+            <li className="flex justify-between text-[var(--text-muted)]">
+              <span>IVA ({Math.round(IVA_RATE * 100)}%)</span>
+              <span>{formatMoney(commissionIva)}</span>
+            </li>
+            <li className="flex justify-between text-[var(--text-muted)]">
+              <span>ISD ({Math.round(ISD_RATE * 100)}%)</span>
+              <span>{formatMoney(commissionIsd)}</span>
+            </li>
+            <li className="flex justify-between border-t border-[var(--border)] pt-1 font-semibold">
+              <span>Total comisión + impuestos</span>
+              <span>{formatMoney(commissionTotal)}</span>
+            </li>
+          </ul>
+          <p className="mt-2 text-xs text-[var(--text-muted)]">
+            Monto a registrar: {formatMoney(values.amount)} + {formatMoney(commissionTotal)} ={" "}
+            <span className="font-semibold text-[var(--text)]">{formatMoney(effectiveAmount)}</span>
+          </p>
+        </div>
+      )}
+
+      <label className="flex cursor-pointer items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--border)] p-3">
+        <input
+          type="checkbox"
+          className="h-4 w-4"
           checked={values.isShared}
           onChange={(e) => {
             const isShared = e.target.checked;
@@ -281,7 +348,7 @@ export function ExpenseForm({
         (() => {
           const payerBalance = cashBalances?.find((c) => c.userId === values.paidById)?.balance;
           if (payerBalance === undefined) return null;
-          const after = round2(payerBalance - values.amount);
+          const after = round2(payerBalance - effectiveAmount);
           return (
             <p className={`text-xs ${after < 0 ? "text-critical" : "text-[var(--text-muted)]"}`}>
               Efectivo de {users.find((u) => u.id === values.paidById)?.name}: {formatMoney(payerBalance)} →{" "}

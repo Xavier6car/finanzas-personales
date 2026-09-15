@@ -108,3 +108,8 @@ export const SETTLEMENT_MODE = {
   REEMBOLSO: "REEMBOLSO",
   PRESUPUESTO: "PRESUPUESTO",
 } as const;
+
+// Tasas vigentes en Ecuador aplicadas sobre comisiones bancarias
+// (ej. comisión por pago con débito en el exterior, retiros, etc.).
+export const IVA_RATE = 0.15; // IVA general
+export const ISD_RATE = 0.05; // Impuesto a la Salida de Divisas
