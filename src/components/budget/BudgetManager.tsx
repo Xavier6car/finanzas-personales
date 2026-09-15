@@ -7,7 +7,7 @@ import { ConfirmButton } from "@/components/ui/ConfirmButton";
 import { BudgetForm, type BudgetFormValues } from "@/components/budget/BudgetForm";
 import { deleteBudget } from "@/actions/budget";
 import { categoryIcon } from "@/lib/constants";
-import { formatMoney, formatMonthLabel, formatPercent } from "@/lib/format";
+import { formatDate, formatMoney, formatMonthLabel, formatPercent } from "@/lib/format";
 import type { BudgetProgress } from "@/lib/budget-data";
 
 interface UserOption {
@@ -28,6 +28,7 @@ export function BudgetManager({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<BudgetFormValues | undefined>();
+  const [viewing, setViewing] = useState<BudgetProgress | undefined>();
 
   function changeMonth(delta: number) {
     const [y, m] = month.split("-").map(Number);
@@ -99,7 +100,19 @@ export function BudgetManager({
             const person = users.find((u) => u.id === b.userId);
             const color = barColor(b.percent);
             return (
-              <div key={b.id} className="card p-4">
+              <div
+                key={b.id}
+                className="card cursor-pointer p-4 transition-colors hover:border-[var(--brand)]"
+                role="button"
+                tabIndex={0}
+                onClick={() => setViewing(b)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setViewing(b);
+                  }
+                }}
+              >
                 <div className="mb-2 flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold">
@@ -107,7 +120,7 @@ export function BudgetManager({
                     </p>
                     <p className="text-xs text-[var(--text-muted)]">{person ? person.name : "Conjunto (hogar)"}</p>
                   </div>
-                  <div className="flex shrink-0 gap-1">
+                  <div className="flex shrink-0 gap-1" onClick={(e) => e.stopPropagation()}>
                     <button
                       className="btn btn-ghost !px-2 !py-1 text-xs"
                       onClick={() => {
@@ -161,6 +174,47 @@ export function BudgetManager({
 
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? "Editar presupuesto" : "Nuevo presupuesto"}>
         <BudgetForm users={users} month={month} initial={editing} onSaved={() => setOpen(false)} />
+      </Modal>
+
+      <Modal
+        open={!!viewing}
+        onClose={() => setViewing(undefined)}
+        title={viewing ? `${categoryIcon(viewing.category)} ${viewing.category}` : ""}
+      >
+        {viewing && (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between text-sm text-[var(--text-secondary)]">
+              <span>{formatMonthLabel(viewing.month)}</span>
+              <span className="font-semibold text-[var(--text)]">
+                {formatMoney(viewing.spent)} de {formatMoney(viewing.amount)}
+              </span>
+            </div>
+
+            {viewing.movements.length === 0 ? (
+              <p className="py-4 text-center text-sm text-[var(--text-muted)]">
+                No hay gastos registrados en esta categoría este mes.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {viewing.movements.map((mv) => (
+                  <li
+                    key={mv.id}
+                    className="flex items-center justify-between gap-3 rounded-[var(--radius-sm)] border border-[var(--border)] p-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{mv.description}</p>
+                      <p className="text-xs text-[var(--text-muted)]">
+                        {formatDate(mv.date)} · {mv.paidByName}
+                        {mv.isShared ? " · compartido" : ""}
+                      </p>
+                    </div>
+                    <span className="shrink-0 font-semibold">{formatMoney(mv.amount)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </Modal>
     </div>
   );

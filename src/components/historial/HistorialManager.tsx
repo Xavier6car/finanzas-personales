@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmButton } from "@/components/ui/ConfirmButton";
+import { Select } from "@/components/ui/Select";
 import { IncomeForm, type IncomeFormValues } from "@/components/income/IncomeForm";
 import { ExpenseForm, type ExpenseFormValues } from "@/components/expense/ExpenseForm";
 import { deleteIncome } from "@/actions/income";
@@ -126,6 +127,8 @@ export function HistorialManager({
         splitType: e.splitType as "NONE" | "EQUAL" | "CUSTOM",
         customShares: e.shares,
         paidWithCash: e.paidWithCash,
+        pendingReimbursement: e.reimbursementStatus !== "NONE",
+        reimbursementStatus: e.reimbursementStatus as "NONE" | "PENDING" | "REIMBURSED",
       });
     }
   }
@@ -237,6 +240,14 @@ export function HistorialManager({
                     {m.description}
                     {m.isShared && <span className="pill ml-2">🤝 Compartido</span>}
                     {m.paidWithCash && <span className="pill ml-2">💵 Efectivo</span>}
+                    {m.reimbursementStatus === "PENDING" && (
+                      <span className="pill ml-2" style={{ color: "var(--warning)" }}>
+                        ⏳ Pendiente de reembolso
+                      </span>
+                    )}
+                    {m.reimbursementStatus === "REIMBURSED" && (
+                      <span className="pill ml-2 text-good">✅ Reembolsado</span>
+                    )}
                   </span>
                   <span className="text-sm text-[var(--text-secondary)]">
                     {m.kind === "income" ? incomeIcon(m.category) : categoryIcon(m.category)} {m.category}
@@ -285,31 +296,6 @@ export function HistorialManager({
           />
         )}
       </Modal>
-    </div>
-  );
-}
-
-function Select({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: [string, string][];
-}) {
-  return (
-    <div>
-      <label className="label">{label}</label>
-      <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
-        {options.map(([v, l]) => (
-          <option key={v} value={v}>
-            {l}
-          </option>
-        ))}
-      </select>
     </div>
   );
 }
