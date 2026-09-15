@@ -14,6 +14,7 @@ interface UserOption {
 
 export interface ExpenseFormValues extends ExpenseInput {
   id?: string;
+  reimbursementStatus?: "NONE" | "PENDING" | "REIMBURSED"; // solo lectura, informativo al editar
 }
 
 function round2(n: number): number {
@@ -53,6 +54,7 @@ export function ExpenseForm({
       splitType: "NONE",
       customShares: defaultShares,
       paidWithCash: false,
+      pendingReimbursement: false,
       notes: "",
     },
   );
@@ -358,6 +360,33 @@ export function ExpenseForm({
             </p>
           );
         })()}
+
+      {values.reimbursementStatus === "REIMBURSED" ? (
+        <div className="flex items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--border)] p-3">
+          <span className="text-sm">
+            ✅ <span className="font-semibold">Ya reembolsado.</span>{" "}
+            <span className="text-[var(--text-muted)]">
+              Se generó el ingreso correspondiente; no se puede desmarcar desde aquí.
+            </span>
+          </span>
+        </div>
+      ) : (
+        <label className="flex cursor-pointer items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--border)] p-3">
+          <input
+            type="checkbox"
+            className="h-4 w-4"
+            checked={!!values.pendingReimbursement}
+            onChange={(e) => set("pendingReimbursement", e.target.checked)}
+          />
+          <span className="flex-1">
+            <span className="block text-sm font-semibold">🔄 ¿Te van a reembolsar este gasto?</span>
+            <span className="block text-xs text-[var(--text-muted)]">
+              Lo dejamos como pendiente de devolución. Cuando te lo devuelvan, marca "Reembolsado" en la lista de
+              gastos y se registra el ingreso automáticamente.
+            </span>
+          </span>
+        </label>
+      )}
 
       <div>
         <label className="label" htmlFor="expense-notes">

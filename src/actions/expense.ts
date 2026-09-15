@@ -20,6 +20,7 @@ export interface ExpenseInput {
   customShares?: ExpenseShareInput[];
   paidWithCash?: boolean;
   notes?: string;
+  pendingReimbursement?: boolean; // true = marcarlo como pendiente de que te lo devuelvan
 }
 
 function round2(n: number): number {
@@ -86,6 +87,7 @@ export async function createExpense(input: ExpenseInput): Promise<ActionResult<{
       splitType: input.isShared ? input.splitType : "NONE",
       paidWithCash: !!input.paidWithCash,
       notes: input.notes?.trim() || null,
+      reimbursementStatus: input.pendingReimbursement ? "PENDING" : "NONE",
       shares: { create: shares },
     },
   });
@@ -106,6 +108,16 @@ export async function updateExpense(id: string, input: ExpenseInput): Promise<Ac
   const shares = await buildShares(input);
   if (typeof shares === "string") return fail(shares);
 
+  const existing = await prisma.expense.findUnique({ where: { id }, select: { reimbursementStatus: true } });
+  // Si ya se marcó como reembolsado (ya se generó el ingreso), no se puede
+  // revertir desde este formulario para no desincronizarlo del ingreso creado.
+  const reimbursementStatus =
+    existing?.reimbursementStatus === "REIMBURSED"
+      ? "REIMBURSED"
+      : input.pendingReimbursement
+        ? "PENDING"
+        : "NONE";
+
   await prisma.$transaction([
     prisma.expenseShare.deleteMany({ where: { expenseId: id } }),
     prisma.expense.update({
@@ -120,6 +132,7 @@ export async function updateExpense(id: string, input: ExpenseInput): Promise<Ac
         splitType: input.isShared ? input.splitType : "NONE",
         paidWithCash: !!input.paidWithCash,
         notes: input.notes?.trim() || null,
+        reimbursementStatus,
         shares: { create: shares },
       },
     }),
@@ -132,6 +145,50 @@ export async function updateExpense(id: string, input: ExpenseInput): Promise<Ac
   revalidatePath("/saldos");
   revalidatePath("/efectivo");
   return ok({ id });
+}
+
+/**
+ * Marca un gasto "pendiente de reembolso" como reembolsado: crea
+ * automáticamente el ingreso correspondiente (mismo monto, mismo usuario que
+ * pagó) y deja el gasto enlazado a ese ingreso.
+ */
+export async function markExpenseReimbursed(
+  id: string,
+  date?: string, // YYYY-MM-DD; por defecto hoy
+): Promise<ActionResult<{ id: string; incomeId: string }>> {
+  const expense = await prisma.expense.findUnique({ where: { id } });
+  if (!expense) return fail("El gasto no existe.");
+  if (expense.reimbursementStatus !== "PENDING")
+    return fail("Este gasto no está pendiente de reembolso.");
+
+  const reimbursedDate = date ? new Date(date + "T00:00:00Z") : new Date();
+
+  const income = await prisma.$transaction(async (tx) => {
+    const created = await tx.income.create({
+      data: {
+        userId: expense.paidById,
+        type: "Reembolso",
+        description: `Reembolso: ${expense.description}`,
+        amount: expense.amount,
+        date: reimbursedDate,
+        notes: `Generado automáticamente al marcar como reembolsado el gasto "${expense.description}".`,
+      },
+    });
+    await tx.expense.update({
+      where: { id },
+      data: { reimbursementStatus: "REIMBURSED", reimbursedAt: new Date(), reimbursementIncomeId: created.id },
+    });
+    return created;
+  });
+
+  revalidatePath("/");
+  revalidatePath("/gastos");
+  revalidatePath("/ingresos");
+  revalidatePath("/historial");
+  revalidatePath("/presupuestos");
+  revalidatePath("/saldos");
+  revalidatePath("/efectivo");
+  return ok({ id, incomeId: income.id });
 }
 
 export async function deleteExpense(id: string): Promise<ActionResult<{ id: string }>> {

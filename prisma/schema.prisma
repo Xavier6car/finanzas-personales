@@ -64,6 +64,12 @@ model Expense {
   splitType   String   @default("NONE") // NONE | EQUAL | CUSTOM
   paidWithCash Boolean @default(false) // true = se pagó con efectivo (descuenta del control de efectivo de paidById)
   notes       String?
+
+  /// NONE = gasto normal | PENDING = pendiente de que te lo reembolsen |
+  /// REIMBURSED = ya se generó el ingreso de reembolso correspondiente.
+  reimbursementStatus  String    @default("NONE")
+  reimbursedAt         DateTime?
+  reimbursementIncomeId String?  // id del Income creado automáticamente al marcarlo reembolsado
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmButton } from "@/components/ui/ConfirmButton";
 import { ExpenseForm, type ExpenseFormValues } from "@/components/expense/ExpenseForm";
-import { deleteExpense } from "@/actions/expense";
+import { deleteExpense, markExpenseReimbursed } from "@/actions/expense";
 import { formatDate, formatDateInput, formatMoney } from "@/lib/format";
 import { categoryIcon } from "@/lib/constants";
 
@@ -25,6 +25,7 @@ interface ExpenseRow {
   isShared: boolean;
   splitType: string;
   paidWithCash: boolean;
+  reimbursementStatus: string;
   shares: { userId: string; amount: number }[];
 }
 
@@ -88,10 +89,18 @@ export function ExpenseManager({
                       <p className="truncate text-xs text-[var(--text-muted)]">
                         {expense.category} · {formatDate(expense.date)} · Pagó {payer?.name}
                       </p>
-                      {(expense.isShared || expense.paidWithCash) && (
+                      {(expense.isShared || expense.paidWithCash || expense.reimbursementStatus !== "NONE") && (
                         <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-[var(--text-secondary)]">
                           {expense.isShared && <span className="pill">🤝 Compartido</span>}
                           {expense.paidWithCash && <span className="pill">💵 Efectivo</span>}
+                          {expense.reimbursementStatus === "PENDING" && (
+                            <span className="pill" style={{ color: "var(--warning)" }}>
+                              ⏳ Pendiente de reembolso
+                            </span>
+                          )}
+                          {expense.reimbursementStatus === "REIMBURSED" && (
+                            <span className="pill text-good">✅ Reembolsado</span>
+                          )}
                           {expense.isShared &&
                             expense.shares.map((s) => (
                               <span key={s.userId}>
@@ -113,6 +122,15 @@ export function ExpenseManager({
                     )}
                     <span className="text-right font-semibold text-critical">-{formatMoney(expense.amount)}</span>
                     <div className="flex items-center gap-2">
+                      {expense.reimbursementStatus === "PENDING" && (
+                        <ConfirmButton
+                          onConfirm={() => markExpenseReimbursed(expense.id)}
+                          label="✅ Reembolsado"
+                          confirmLabel="¿Ya te lo devolvieron?"
+                          confirmActionLabel="Sí, ya me lo devolvieron"
+                          tone="good"
+                        />
+                      )}
                       <button
                         className="btn btn-ghost !px-2 !py-1 text-xs"
                         onClick={() => {
@@ -127,6 +145,8 @@ export function ExpenseManager({
                             splitType: expense.splitType as "NONE" | "EQUAL" | "CUSTOM",
                             customShares: expense.shares,
                             paidWithCash: expense.paidWithCash,
+                            pendingReimbursement: expense.reimbursementStatus !== "NONE",
+                            reimbursementStatus: expense.reimbursementStatus as "NONE" | "PENDING" | "REIMBURSED",
                           });
                           setOpen(true);
                         }}

@@ -36,6 +36,7 @@ export type IncomeType =
   | "Honorarios"
   | "Bonificación"
   | "Comisiones"
+  | "Reembolso"
   | "Ingresos extraordinarios"
   | "Otros";
 
@@ -44,6 +45,7 @@ export const INCOME_TYPES: { value: IncomeType; icon: string }[] = [
   { value: "Honorarios", icon: "🧾" },
   { value: "Bonificación", icon: "🎁" },
   { value: "Comisiones", icon: "🤝" },
+  { value: "Reembolso", icon: "🔄" },
   { value: "Ingresos extraordinarios", icon: "✨" },
   { value: "Otros", icon: "➕" },
 ];

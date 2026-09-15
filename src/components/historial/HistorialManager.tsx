@@ -126,6 +126,8 @@ export function HistorialManager({
         splitType: e.splitType as "NONE" | "EQUAL" | "CUSTOM",
         customShares: e.shares,
         paidWithCash: e.paidWithCash,
+        pendingReimbursement: e.reimbursementStatus !== "NONE",
+        reimbursementStatus: e.reimbursementStatus as "NONE" | "PENDING" | "REIMBURSED",
       });
     }
   }
@@ -237,6 +239,14 @@ export function HistorialManager({
                     {m.description}
                     {m.isShared && <span className="pill ml-2">🤝 Compartido</span>}
                     {m.paidWithCash && <span className="pill ml-2">💵 Efectivo</span>}
+                    {m.reimbursementStatus === "PENDING" && (
+                      <span className="pill ml-2" style={{ color: "var(--warning)" }}>
+                        ⏳ Pendiente de reembolso
+                      </span>
+                    )}
+                    {m.reimbursementStatus === "REIMBURSED" && (
+                      <span className="pill ml-2 text-good">✅ Reembolsado</span>
+                    )}
                   </span>
                   <span className="text-sm text-[var(--text-secondary)]">
                     {m.kind === "income" ? incomeIcon(m.category) : categoryIcon(m.category)} {m.category}
