@@ -26,11 +26,13 @@ export function HistorialManager({
   currentUserId,
   incomes,
   expenses,
+  cashBalances,
 }: {
   users: UserOption[];
   currentUserId: string;
   incomes: IncomeLike[];
   expenses: ExpenseLike[];
+  cashBalances?: { userId: string; balance: number }[];
 }) {
   const movements = useMemo(() => buildMovements(incomes, expenses), [incomes, expenses]);
 
@@ -123,6 +125,7 @@ export function HistorialManager({
         isShared: e.isShared,
         splitType: e.splitType as "NONE" | "EQUAL" | "CUSTOM",
         customShares: e.shares,
+        paidWithCash: e.paidWithCash,
       });
     }
   }
@@ -233,6 +236,7 @@ export function HistorialManager({
                   <span className="min-w-0 truncate font-medium">
                     {m.description}
                     {m.isShared && <span className="pill ml-2">🤝 Compartido</span>}
+                    {m.paidWithCash && <span className="pill ml-2">💵 Efectivo</span>}
                   </span>
                   <span className="text-sm text-[var(--text-secondary)]">
                     {m.kind === "income" ? incomeIcon(m.category) : categoryIcon(m.category)} {m.category}
@@ -272,7 +276,13 @@ export function HistorialManager({
 
       <Modal open={!!editingExpense} onClose={() => setEditingExpense(undefined)} title="Editar gasto">
         {editingExpense && (
-          <ExpenseForm users={users} currentUserId={currentUserId} initial={editingExpense} onSaved={() => setEditingExpense(undefined)} />
+          <ExpenseForm
+            users={users}
+            currentUserId={currentUserId}
+            initial={editingExpense}
+            cashBalances={cashBalances}
+            onSaved={() => setEditingExpense(undefined)}
+          />
         )}
       </Modal>
     </div>

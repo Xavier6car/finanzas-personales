@@ -50,7 +50,7 @@ export function IncomeManager({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-bold">Ingresos</h1>
         <button
           className="btn btn-primary"
@@ -73,45 +73,49 @@ export function IncomeManager({
             {incomes.map((income) => {
               const user = userOf(income.userId);
               return (
-                <li key={income.id} className="flex items-center gap-3 p-4">
-                  <span className="text-xl" aria-hidden>
-                    {incomeIcon(income.type)}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{income.description}</p>
-                    <p className="text-xs text-[var(--text-muted)]">
-                      {income.type} · {formatDate(income.date)}
-                      {income.account ? ` · ${income.account}` : ""}
-                    </p>
-                  </div>
-                  {user && (
-                    <span
-                      className="pill hidden sm:inline-flex"
-                      style={{ color: user.color, background: `color-mix(in srgb, ${user.color} 14%, transparent)` }}
-                    >
-                      {user.name}
+                <li key={income.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 p-4">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <span className="shrink-0 text-xl" aria-hidden>
+                      {incomeIcon(income.type)}
                     </span>
-                  )}
-                  <span className="w-24 text-right font-semibold text-good">+{formatMoney(income.amount)}</span>
-                  <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3">
-                    <button
-                      className="btn btn-ghost !px-2 !py-1 text-xs"
-                      onClick={() => {
-                        setEditing({
-                          id: income.id,
-                          userId: income.userId,
-                          type: income.type,
-                          description: income.description,
-                          amount: income.amount,
-                          date: formatDateInput(income.date),
-                          account: income.account ?? "",
-                        });
-                        setOpen(true);
-                      }}
-                    >
-                      Editar
-                    </button>
-                    <ConfirmButton onConfirm={() => deleteIncome(income.id)} />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium">{income.description}</p>
+                      <p className="truncate text-xs text-[var(--text-muted)]">
+                        {income.type} · {formatDate(income.date)}
+                        {income.account ? ` · ${income.account}` : ""}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="ml-auto flex shrink-0 items-center gap-3">
+                    {user && (
+                      <span
+                        className="pill hidden sm:inline-flex"
+                        style={{ color: user.color, background: `color-mix(in srgb, ${user.color} 14%, transparent)` }}
+                      >
+                        {user.name}
+                      </span>
+                    )}
+                    <span className="text-right font-semibold text-good">+{formatMoney(income.amount)}</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="btn btn-ghost !px-2 !py-1 text-xs"
+                        onClick={() => {
+                          setEditing({
+                            id: income.id,
+                            userId: income.userId,
+                            type: income.type,
+                            description: income.description,
+                            amount: income.amount,
+                            date: formatDateInput(income.date),
+                            account: income.account ?? "",
+                          });
+                          setOpen(true);
+                        }}
+                      >
+                        Editar
+                      </button>
+                      <ConfirmButton onConfirm={() => deleteIncome(income.id)} />
+                    </div>
                   </div>
                 </li>
               );

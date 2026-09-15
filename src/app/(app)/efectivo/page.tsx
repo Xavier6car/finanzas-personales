@@ -2,26 +2,24 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getCashBalances } from "@/lib/cash-data";
-import { ExpenseManager } from "@/components/expense/ExpenseManager";
+import { CashManager } from "@/components/cash/CashManager";
 
 export const dynamic = "force-dynamic";
 
-export default async function GastosPage() {
+export default async function EfectivoPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/quien-eres");
 
-  const [users, expenses, cashBalances] = await Promise.all([
+  const [users, balances] = await Promise.all([
     prisma.user.findMany({ orderBy: { createdAt: "asc" } }),
-    prisma.expense.findMany({ orderBy: { date: "desc" }, include: { shares: true } }),
     getCashBalances(),
   ]);
 
   return (
-    <ExpenseManager
+    <CashManager
       users={users.map((u) => ({ id: u.id, name: u.name, color: u.color }))}
       currentUserId={user.id}
-      expenses={expenses}
-      cashBalances={cashBalances.map((c) => ({ userId: c.userId, balance: c.balance }))}
+      balances={balances}
     />
   );
 }

@@ -18,6 +18,7 @@ export interface ExpenseInput {
   isShared: boolean;
   splitType: "NONE" | "EQUAL" | "CUSTOM";
   customShares?: ExpenseShareInput[];
+  paidWithCash?: boolean;
   notes?: string;
 }
 
@@ -83,6 +84,7 @@ export async function createExpense(input: ExpenseInput): Promise<ActionResult<{
       date: new Date(input.date + "T00:00:00Z"),
       isShared: input.isShared,
       splitType: input.isShared ? input.splitType : "NONE",
+      paidWithCash: !!input.paidWithCash,
       notes: input.notes?.trim() || null,
       shares: { create: shares },
     },
@@ -93,6 +95,7 @@ export async function createExpense(input: ExpenseInput): Promise<ActionResult<{
   revalidatePath("/historial");
   revalidatePath("/presupuestos");
   revalidatePath("/saldos");
+  revalidatePath("/efectivo");
   return ok({ id: expense.id });
 }
 
@@ -115,6 +118,7 @@ export async function updateExpense(id: string, input: ExpenseInput): Promise<Ac
         date: new Date(input.date + "T00:00:00Z"),
         isShared: input.isShared,
         splitType: input.isShared ? input.splitType : "NONE",
+        paidWithCash: !!input.paidWithCash,
         notes: input.notes?.trim() || null,
         shares: { create: shares },
       },
@@ -126,6 +130,7 @@ export async function updateExpense(id: string, input: ExpenseInput): Promise<Ac
   revalidatePath("/historial");
   revalidatePath("/presupuestos");
   revalidatePath("/saldos");
+  revalidatePath("/efectivo");
   return ok({ id });
 }
 
@@ -136,5 +141,6 @@ export async function deleteExpense(id: string): Promise<ActionResult<{ id: stri
   revalidatePath("/historial");
   revalidatePath("/presupuestos");
   revalidatePath("/saldos");
+  revalidatePath("/efectivo");
   return ok({ id });
 }

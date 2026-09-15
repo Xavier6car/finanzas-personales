@@ -96,6 +96,11 @@
 html,
 body {
   height: 100%;
+  /* Red de seguridad: si algún elemento se desborda horizontalmente, que se
+     recorte en vez de forzar que el navegador móvil agrande todo el viewport
+     (lo que rompe visualmente el resto de la página en cascada). */
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
