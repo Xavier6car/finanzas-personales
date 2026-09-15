@@ -53,7 +53,7 @@ export default async function DashboardPage({
           tone={data.totals.cumulativeSavings + totalCash >= 0 ? "good" : "critical"}
           icon="⚖️"
         />
-        <StatCard label="Ahorro acumulado" value={formatMoney(data.totals.cumulativeSavings)} icon="🏦" />
+        <StatCard label="Ahorro acumulado" value={formatMoney(data.totals.cumulativeSavings - totalCash)} icon="🏦" />
         <StatCard label="Efectivo disponible" value={formatMoney(totalCash)} tone={totalCash < 0 ? "critical" : "default"} icon="💰" />
         <StatCard
           label="% de ingresos gastado"
