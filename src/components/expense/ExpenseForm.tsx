@@ -392,7 +392,7 @@ export function ExpenseForm({
           <span className="flex-1">
             <span className="block text-sm font-semibold">🔄 ¿Te van a reembolsar este gasto?</span>
             <span className="block text-xs text-[var(--text-muted)]">
-              Lo dejamos como pendiente de devolución. Cuando te lo devuelvan, marca "Reembolsado" en la lista de
+              Lo dejamos como pendiente de devolución. Cuando te lo devuelvan, marca &quot;Reembolsado&quot; en la lista de
               gastos y se registra el ingreso automáticamente.
             </span>
           </span>
