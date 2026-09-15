@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmButton } from "@/components/ui/ConfirmButton";
+import { Select } from "@/components/ui/Select";
 import { IncomeForm, type IncomeFormValues } from "@/components/income/IncomeForm";
 import { ExpenseForm, type ExpenseFormValues } from "@/components/expense/ExpenseForm";
 import { deleteIncome } from "@/actions/income";
@@ -295,31 +296,6 @@ export function HistorialManager({
           />
         )}
       </Modal>
-    </div>
-  );
-}
-
-function Select({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: [string, string][];
-}) {
-  return (
-    <div>
-      <label className="label">{label}</label>
-      <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
-        {options.map(([v, l]) => (
-          <option key={v} value={v}>
-            {l}
-          </option>
-        ))}
-      </select>
     </div>
   );
 }

@@ -36,7 +36,10 @@ export async function getBudgetProgress(month: string): Promise<BudgetProgress[]
   const end = new Date(Date.UTC(y, m, 1));
 
   const expenses = await prisma.expense.findMany({
-    where: { date: { gte: start, lt: end } },
+    // Los gastos pendientes de reembolso (o ya reembolsados) no cuentan
+    // contra el presupuesto: ese dinero vuelve o no salió realmente "de tu
+    // bolsillo" para ese rubro.
+    where: { date: { gte: start, lt: end }, reimbursementStatus: "NONE" },
     include: { shares: true, paidBy: { select: { name: true } } },
     orderBy: { date: "desc" },
   });

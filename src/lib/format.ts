@@ -35,6 +35,13 @@ export function formatDateInput(date: Date | string): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** Fecha (YYYY-MM-DD) de hace `days` días, usada como límite inferior por defecto en listados. */
+export function daysAgoInput(days: number): string {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() - days);
+  return formatDateInput(d);
+}
+
 export function formatMonthLabel(monthKey: string): string {
   // monthKey: "YYYY-MM"
   const [y, m] = monthKey.split("-").map(Number);
