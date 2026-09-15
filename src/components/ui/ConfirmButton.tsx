@@ -6,10 +6,12 @@ export function ConfirmButton({
   onConfirm,
   label = "Eliminar",
   confirmLabel = "¿Seguro?",
+  ariaLabel,
 }: {
   onConfirm: () => Promise<unknown>;
-  label?: string;
+  label?: React.ReactNode;
   confirmLabel?: string;
+  ariaLabel?: string;
 }) {
   const [confirming, setConfirming] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -33,7 +35,11 @@ export function ConfirmButton({
   }
 
   return (
-    <button className="btn btn-ghost !px-2 !py-1 text-xs text-critical" onClick={() => setConfirming(true)}>
+    <button
+      className="btn btn-ghost !px-2 !py-1 text-xs text-critical"
+      onClick={() => setConfirming(true)}
+      aria-label={ariaLabel}
+    >
       {label}
     </button>
   );

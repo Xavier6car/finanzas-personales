@@ -95,7 +95,7 @@ export function IncomeManager({
                         {user.name}
                       </span>
                     )}
-                    <span className="text-right font-semibold text-good">+{formatMoney(income.amount)}</span>
+                    <span className="text-right font-semibold tabular-nums text-good">+{formatMoney(income.amount)}</span>
                     <div className="flex items-center gap-2">
                       <button
                         className="btn btn-ghost !px-2 !py-1 text-xs"

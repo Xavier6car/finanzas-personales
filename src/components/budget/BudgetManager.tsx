@@ -8,6 +8,7 @@ import { BudgetForm, type BudgetFormValues } from "@/components/budget/BudgetFor
 import { deleteBudget } from "@/actions/budget";
 import { categoryIcon } from "@/lib/constants";
 import { formatMoney, formatMonthLabel, formatPercent } from "@/lib/format";
+import { Icon } from "@/components/ui/Icon";
 import type { BudgetProgress } from "@/lib/budget-data";
 
 interface UserOption {
@@ -51,11 +52,11 @@ export function BudgetManager({
         <h1 className="text-xl font-bold">Presupuestos</h1>
         <div className="flex items-center gap-2">
           <button className="btn btn-secondary !px-2" onClick={() => changeMonth(-1)} aria-label="Mes anterior">
-            ←
+            <Icon name="chevronLeft" className="h-4 w-4" />
           </button>
           <span className="min-w-[9rem] text-center text-sm font-semibold capitalize">{formatMonthLabel(month)}</span>
           <button className="btn btn-secondary !px-2" onClick={() => changeMonth(1)} aria-label="Mes siguiente">
-            →
+            <Icon name="chevronRight" className="h-4 w-4" />
           </button>
           <button
             className="btn btn-primary ml-2"
@@ -73,7 +74,7 @@ export function BudgetManager({
         <div className="card mb-4 p-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-[var(--text-secondary)]">Total asignado vs. gastado del mes</span>
-            <span className="font-semibold">
+            <span className="font-semibold tabular-nums">
               {formatMoney(totalSpent)} / {formatMoney(totalAssigned)}
             </span>
           </div>
@@ -136,19 +137,23 @@ export function BudgetManager({
                 </div>
 
                 <div className="mt-2 flex items-center justify-between text-sm">
-                  <span>
+                  <span className="tabular-nums">
                     {formatMoney(b.spent)} <span className="text-[var(--text-muted)]">de {formatMoney(b.amount)}</span>
                   </span>
-                  <span className="font-semibold" style={{ color }}>
+                  <span className="font-semibold tabular-nums" style={{ color }}>
                     {formatPercent(b.percent)}
                   </span>
                 </div>
 
                 {b.percent >= 100 ? (
-                  <p className="mt-1 text-xs font-medium text-critical">⚠️ Presupuesto superado.</p>
+                  <p className="mt-1 flex items-center gap-1 text-xs font-medium text-critical">
+                    <Icon name="warning" className="h-3.5 w-3.5" />
+                    Presupuesto superado.
+                  </p>
                 ) : b.percent >= 80 ? (
-                  <p className="mt-1 text-xs font-medium" style={{ color: "var(--warning)" }}>
-                    ⚠️ Cerca del límite ({formatMoney(b.remaining)} disponible).
+                  <p className="mt-1 flex items-center gap-1 text-xs font-medium" style={{ color: "var(--warning)" }}>
+                    <Icon name="warning" className="h-3.5 w-3.5" />
+                    Cerca del límite ({formatMoney(b.remaining)} disponible).
                   </p>
                 ) : (
                   <p className="mt-1 text-xs text-[var(--text-muted)]">{formatMoney(b.remaining)} disponible</p>

@@ -10,6 +10,7 @@ import { deleteExpense } from "@/actions/expense";
 import { buildMovements, type ExpenseLike, type IncomeLike, type Movement } from "@/lib/movements";
 import { categoryIcon, incomeIcon, INCOME_TYPES, EXPENSE_CATEGORIES } from "@/lib/constants";
 import { formatDate, formatDateInput, formatMoney } from "@/lib/format";
+import { Icon } from "@/components/ui/Icon";
 
 interface UserOption {
   id: string;
@@ -235,8 +236,16 @@ export function HistorialManager({
                   <span className="text-xs text-[var(--text-muted)] sm:text-sm">{formatDate(m.date)}</span>
                   <span className="min-w-0 truncate font-medium">
                     {m.description}
-                    {m.isShared && <span className="pill ml-2">🤝 Compartido</span>}
-                    {m.paidWithCash && <span className="pill ml-2">💵 Efectivo</span>}
+                    {m.isShared && (
+                      <span className="pill ml-2">
+                        <Icon name="users" className="h-3 w-3" /> Compartido
+                      </span>
+                    )}
+                    {m.paidWithCash && (
+                      <span className="pill ml-2">
+                        <Icon name="income" className="h-3 w-3" /> Efectivo
+                      </span>
+                    )}
                   </span>
                   <span className="text-sm text-[var(--text-secondary)]">
                     {m.kind === "income" ? incomeIcon(m.category) : categoryIcon(m.category)} {m.category}
@@ -251,7 +260,7 @@ export function HistorialManager({
                       </span>
                     )}
                   </span>
-                  <span className={`text-right font-semibold sm:text-right ${m.kind === "income" ? "text-good" : "text-critical"}`}>
+                  <span className={`text-right font-semibold tabular-nums sm:text-right ${m.kind === "income" ? "text-good" : "text-critical"}`}>
                     {m.kind === "income" ? "+" : "-"}
                     {formatMoney(m.amount)}
                   </span>

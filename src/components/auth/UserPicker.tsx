@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { loginAsUser } from "@/actions/auth";
+import { Icon } from "@/components/ui/Icon";
 
 interface UserOption {
   id: string;
@@ -101,7 +102,7 @@ export function UserPicker({
               <span className="block text-xs text-[var(--text-muted)]">Última sesión en este dispositivo</span>
             )}
           </span>
-          {requirePin && user.hasPin && <span className="text-lg">🔒</span>}
+          {requirePin && user.hasPin && <Icon name="lock" className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />}
         </button>
       ))}
       {error && <p className="text-sm text-critical">{error}</p>}

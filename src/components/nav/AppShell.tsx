@@ -4,17 +4,18 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { logout } from "@/actions/auth";
+import { Icon, type IconName } from "@/components/ui/Icon";
 
-const NAV_ITEMS = [
-  { href: "/", label: "Inicio", icon: "🏠" },
-  { href: "/ingresos", label: "Ingresos", icon: "💵" },
-  { href: "/gastos", label: "Gastos", icon: "🧾" },
-  { href: "/efectivo", label: "Efectivo", icon: "💰" },
-  { href: "/historial", label: "Historial", icon: "📜" },
-  { href: "/presupuestos", label: "Presupuestos", icon: "📊" },
-  { href: "/metas", label: "Metas de ahorro", icon: "🎯" },
-  { href: "/saldos", label: "Saldos entre nosotros", icon: "🤝" },
-  { href: "/ajustes", label: "Ajustes", icon: "⚙️" },
+const NAV_ITEMS: { href: string; label: string; icon: IconName }[] = [
+  { href: "/", label: "Inicio", icon: "home" },
+  { href: "/ingresos", label: "Ingresos", icon: "income" },
+  { href: "/gastos", label: "Gastos", icon: "expense" },
+  { href: "/efectivo", label: "Efectivo", icon: "wallet" },
+  { href: "/historial", label: "Historial", icon: "history" },
+  { href: "/presupuestos", label: "Presupuestos", icon: "budget" },
+  { href: "/metas", label: "Metas de ahorro", icon: "goal" },
+  { href: "/saldos", label: "Saldos entre nosotros", icon: "users" },
+  { href: "/ajustes", label: "Ajustes", icon: "settings" },
 ];
 
 const MOBILE_PRIMARY = ["/", "/ingresos", "/gastos", "/historial"];
@@ -51,7 +52,7 @@ export function AppShell({
                   : "text-[var(--text-secondary)] hover:bg-surface-2"
               }`}
             >
-              <span aria-hidden>{item.icon}</span>
+              <Icon name={item.icon} className="h-5 w-5" />
               {item.label}
             </Link>
           ))}
@@ -67,7 +68,7 @@ export function AppShell({
             className="btn btn-ghost !px-2"
             onClick={() => setDrawerOpen(true)}
           >
-            <span className="text-xl">☰</span>
+            <Icon name="menu" className="h-5 w-5" />
           </button>
           <Brand compact />
           <span
@@ -96,7 +97,7 @@ export function AppShell({
             <div className="mb-4 flex items-center justify-between">
               <Brand />
               <button className="btn btn-ghost !px-2" onClick={() => setDrawerOpen(false)} aria-label="Cerrar">
-                ✕
+                <Icon name="close" className="h-5 w-5" />
               </button>
             </div>
             <nav className="flex flex-1 flex-col gap-1">
@@ -109,7 +110,7 @@ export function AppShell({
                     isActive(item.href) ? "bg-brand text-white" : "text-[var(--text-secondary)] hover:bg-surface-2"
                   }`}
                 >
-                  <span aria-hidden>{item.icon}</span>
+                  <Icon name={item.icon} className="h-5 w-5" />
                   {item.label}
                 </Link>
               ))}
@@ -129,9 +130,7 @@ export function AppShell({
               isActive(item.href) ? "text-brand" : "text-[var(--text-muted)]"
             }`}
           >
-            <span className="text-lg" aria-hidden>
-              {item.icon}
-            </span>
+            <Icon name={item.icon} className="h-5 w-5" />
             <span className="w-full truncate text-center">{item.label}</span>
           </Link>
         ))}
@@ -139,9 +138,7 @@ export function AppShell({
           className="flex min-w-0 flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium text-[var(--text-muted)]"
           onClick={() => setDrawerOpen(true)}
         >
-          <span className="text-lg" aria-hidden>
-            ⋯
-          </span>
+          <Icon name="menu" className="h-5 w-5" />
           <span className="w-full truncate text-center">Más</span>
         </button>
       </nav>
@@ -157,7 +154,8 @@ export function AppShell({
                 router.push("/ingresos?nuevo=1");
               }}
             >
-              💵 Nuevo ingreso
+              <Icon name="income" className="h-4 w-4" />
+              Nuevo ingreso
             </button>
             <button
               className="btn btn-primary shadow-lg"
@@ -166,16 +164,17 @@ export function AppShell({
                 router.push("/gastos?nuevo=1");
               }}
             >
-              🧾 Nuevo gasto
+              <Icon name="expense" className="h-4 w-4" />
+              Nuevo gasto
             </button>
           </div>
         )}
         <button
           aria-label="Agregar movimiento"
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-brand text-2xl text-white shadow-lg transition hover:opacity-90"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-brand text-white shadow-lg transition hover:opacity-90"
           onClick={() => setFabOpen((v) => !v)}
         >
-          {fabOpen ? "✕" : "+"}
+          <Icon name={fabOpen ? "close" : "plus"} className="h-6 w-6" />
         </button>
       </div>
     </div>
@@ -185,7 +184,9 @@ export function AppShell({
 function Brand({ compact }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white">💛</span>
+      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white">
+        <Icon name="heart" className="h-4 w-4" />
+      </span>
       {!compact && <span className="font-bold">Nosotros Finanzas</span>}
     </div>
   );
@@ -214,7 +215,8 @@ function UserSwitcher({
       </div>
       <form action={logout}>
         <button type="submit" className="btn btn-ghost w-full justify-start !px-2 text-sm">
-          🔁 Cambiar de usuario
+          <Icon name="refresh" className="h-4 w-4" />
+          Cambiar de usuario
         </button>
       </form>
     </div>

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setUserPin, setRequirePin, setSettlementMode, logout } from "@/actions/auth";
+import { Icon } from "@/components/ui/Icon";
 
 interface UserOption {
   id: string;
@@ -121,7 +122,8 @@ export function SettingsForm({
               })
             }
           >
-            🤝 Control de reembolsos
+            <Icon name="users" className="h-4 w-4" />
+            Control de reembolsos
           </button>
           <button
             className={`btn flex-1 ${settlementMode === "PRESUPUESTO" ? "btn-primary" : "btn-secondary"}`}
@@ -132,7 +134,8 @@ export function SettingsForm({
               })
             }
           >
-            📊 Solo control presupuestario
+            <Icon name="budget" className="h-4 w-4" />
+            Solo control presupuestario
           </button>
         </div>
         <p className="mt-2 text-xs text-[var(--text-muted)]">
@@ -146,7 +149,8 @@ export function SettingsForm({
         <h2 className="mb-1 font-semibold">Sesión</h2>
         <form action={logout}>
           <button type="submit" className="btn btn-secondary">
-            🔁 Cambiar de usuario
+            <Icon name="refresh" className="h-4 w-4" />
+            Cambiar de usuario
           </button>
         </form>
       </section>

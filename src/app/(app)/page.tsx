@@ -35,31 +35,31 @@ export default async function DashboardPage({
       {/* KPIs por persona */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {data.perPerson.map((p) => (
-          <StatCard key={p.userId} label={`Ingresos · ${p.name}`} value={formatMoney(p.incomes)} tone="good" icon="💵" />
+          <StatCard key={p.userId} label={`Ingresos · ${p.name}`} value={formatMoney(p.incomes)} tone="good" icon="income" />
         ))}
-        <StatCard label="Ingresos del hogar" value={formatMoney(data.totals.incomesHousehold)} tone="good" icon="🏡" />
+        <StatCard label="Ingresos del hogar" value={formatMoney(data.totals.incomesHousehold)} tone="good" icon="home" />
 
         {data.perPerson.map((p) => (
-          <StatCard key={p.userId + "-e"} label={`Gastos · ${p.name}`} value={formatMoney(p.expenses)} tone="critical" icon="🧾" />
+          <StatCard key={p.userId + "-e"} label={`Gastos · ${p.name}`} value={formatMoney(p.expenses)} tone="critical" icon="expense" />
         ))}
-        <StatCard label="Gastos compartidos" value={formatMoney(data.totals.sharedExpenses)} icon="🤝" />
+        <StatCard label="Gastos compartidos" value={formatMoney(data.totals.sharedExpenses)} icon="users" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Gastos generales" value={formatMoney(data.totals.expensesHousehold)} icon="📉" />
+        <StatCard label="Gastos generales" value={formatMoney(data.totals.expensesHousehold)} icon="trendingDown" />
         <StatCard
           label="Balance del período"
           value={formatMoney(data.totals.balance)}
           tone={data.totals.balance >= 0 ? "good" : "critical"}
-          icon="⚖️"
+          icon="scale"
         />
-        <StatCard label="Ahorro acumulado" value={formatMoney(data.totals.cumulativeSavings)} icon="🏦" />
-        <StatCard label="Efectivo disponible" value={formatMoney(totalCash)} tone={totalCash < 0 ? "critical" : "default"} icon="💰" />
+        <StatCard label="Ahorro acumulado" value={formatMoney(data.totals.cumulativeSavings)} icon="piggyBank" />
+        <StatCard label="Efectivo disponible" value={formatMoney(totalCash)} tone={totalCash < 0 ? "critical" : "default"} icon="wallet" />
         <StatCard
           label="% de ingresos gastado"
           value={formatPercent(data.totals.percentSpent)}
           tone={data.totals.percentSpent > 90 ? "critical" : "default"}
-          icon="📐"
+          icon="percent"
         />
       </div>
 

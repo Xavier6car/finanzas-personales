@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getAppSettings, getCurrentUser } from "@/lib/auth";
 import { UserPicker } from "@/components/auth/UserPicker";
+import { Icon } from "@/components/ui/Icon";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +16,8 @@ export default async function QuienEresPage() {
     <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm text-center">
         <div className="mb-8">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-2xl text-white shadow-sm">
-            💛
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-white shadow-sm">
+            <Icon name="heart" className="h-7 w-7" />
           </div>
           <h1 className="text-2xl font-bold">¿Quién eres?</h1>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">

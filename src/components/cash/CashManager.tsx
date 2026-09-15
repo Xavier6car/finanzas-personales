@@ -7,6 +7,7 @@ import { CashMovementForm } from "@/components/cash/CashMovementForm";
 import { deleteCashMovement } from "@/actions/cash";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { CashBalance } from "@/lib/cash-data";
+import { Icon } from "@/components/ui/Icon";
 
 interface UserOption {
   id: string;
@@ -43,7 +44,7 @@ export function CashManager({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="card p-4">
           <p className="text-xs font-medium text-[var(--text-secondary)]">Efectivo total del hogar</p>
-          <p className={`mt-1.5 text-2xl font-bold ${total < 0 ? "text-critical" : ""}`}>{formatMoney(total)}</p>
+          <p className={`mt-1.5 text-2xl font-bold tabular-nums ${total < 0 ? "text-critical" : ""}`}>{formatMoney(total)}</p>
         </div>
         {balances.map((b) => (
           <div key={b.userId} className="card p-4">
@@ -51,7 +52,7 @@ export function CashManager({
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: b.color }} />
               {b.name}
             </p>
-            <p className={`mt-1.5 text-2xl font-bold ${b.balance < 0 ? "text-critical" : ""}`}>
+            <p className={`mt-1.5 text-2xl font-bold tabular-nums ${b.balance < 0 ? "text-critical" : ""}`}>
               {formatMoney(b.balance)}
             </p>
           </div>
@@ -68,7 +69,10 @@ export function CashManager({
               <ul className="max-h-96 divide-y divide-[var(--border)] overflow-y-auto scrollbar-thin">
                 {b.ledger.map((entry) => (
                   <li key={`${entry.kind}-${entry.id}`} className="flex items-center gap-3 p-3 text-sm">
-                    <span aria-hidden>{entry.kind === "expense" ? "🧾" : entry.amount >= 0 ? "➕" : "➖"}</span>
+                    <Icon
+                      name={entry.kind === "expense" ? "expense" : entry.amount >= 0 ? "plus" : "minus"}
+                      className="h-4 w-4 shrink-0 text-[var(--text-muted)]"
+                    />
                     <div className="min-w-0 flex-1">
                       <p className="truncate">{entry.description}</p>
                       <p className="text-xs text-[var(--text-muted)]">
@@ -76,12 +80,16 @@ export function CashManager({
                         {entry.kind === "expense" ? " · gasto en efectivo" : ""}
                       </p>
                     </div>
-                    <span className={`font-semibold ${entry.amount >= 0 ? "text-good" : "text-critical"}`}>
+                    <span className={`font-semibold tabular-nums ${entry.amount >= 0 ? "text-good" : "text-critical"}`}>
                       {entry.amount >= 0 ? "+" : ""}
                       {formatMoney(entry.amount)}
                     </span>
                     {entry.kind === "movement" && (
-                      <ConfirmButton onConfirm={() => deleteCashMovement(entry.id)} label="✕" />
+                      <ConfirmButton
+                        onConfirm={() => deleteCashMovement(entry.id)}
+                        label={<Icon name="close" className="h-3.5 w-3.5" />}
+                        ariaLabel="Eliminar movimiento"
+                      />
                     )}
                   </li>
                 ))}

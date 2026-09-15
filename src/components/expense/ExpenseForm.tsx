@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createExpense, updateExpense, type ExpenseInput } from "@/actions/expense";
 import { EXPENSE_CATEGORIES } from "@/lib/constants";
 import { formatDateInput, formatMoney } from "@/lib/format";
+import { Icon } from "@/components/ui/Icon";
 
 interface UserOption {
   id: string;
@@ -270,7 +271,9 @@ export function ExpenseForm({
           onChange={(e) => set("paidWithCash", e.target.checked)}
         />
         <span className="flex-1">
-          <span className="block text-sm font-semibold">💵 ¿Pagaste con efectivo?</span>
+          <span className="flex items-center gap-1.5 text-sm font-semibold">
+            <Icon name="income" className="h-4 w-4" /> ¿Pagaste con efectivo?
+          </span>
           <span className="block text-xs text-[var(--text-muted)]">
             Descuenta el monto del control de efectivo de {users.find((u) => u.id === values.paidById)?.name}.
           </span>

@@ -2,6 +2,7 @@ import { computeSettlement, type SharedExpenseLike } from "@/lib/settlement";
 import { categoryIcon } from "@/lib/constants";
 import { formatDate, formatMoney } from "@/lib/format";
 import { PeriodSelector } from "@/components/dashboard/PeriodSelector";
+import { Icon } from "@/components/ui/Icon";
 import type { PeriodKey } from "@/lib/period";
 
 interface UserOption {
@@ -59,15 +60,15 @@ export function SettlementView({
               <dl className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-[var(--text-secondary)]">Pagó en compartidos</dt>
-                  <dd className="font-medium">{formatMoney(u.paid)}</dd>
+                  <dd className="font-medium tabular-nums">{formatMoney(u.paid)}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-[var(--text-secondary)]">Le corresponde asumir</dt>
-                  <dd className="font-medium">{formatMoney(u.owed)}</dd>
+                  <dd className="font-medium tabular-nums">{formatMoney(u.owed)}</dd>
                 </div>
                 <div className="flex justify-between border-t border-[var(--border)] pt-1">
                   <dt className="font-medium">{u.net >= 0 ? "Adelantó" : "Debe"}</dt>
-                  <dd className={`font-bold ${u.net >= 0 ? "text-good" : "text-critical"}`}>
+                  <dd className={`font-bold tabular-nums ${u.net >= 0 ? "text-good" : "text-critical"}`}>
                     {formatMoney(Math.abs(u.net))}
                   </dd>
                 </div>
@@ -82,10 +83,13 @@ export function SettlementView({
           {result.settlement ? (
             <p className="text-lg">
               <strong>{result.settlement.fromName}</strong> le debe pagar a <strong>{result.settlement.toName}</strong>{" "}
-              <span className="font-bold text-brand">{formatMoney(result.settlement.amount)}</span> para saldar cuentas.
+              <span className="font-bold text-brand tabular-nums">{formatMoney(result.settlement.amount)}</span> para saldar cuentas.
             </p>
           ) : (
-            <p className="text-lg font-medium text-good">✓ Están al día, no hay saldos pendientes.</p>
+            <p className="flex items-center justify-center gap-2 text-lg font-medium text-good">
+              <Icon name="check" className="h-5 w-5" />
+              Están al día, no hay saldos pendientes.
+            </p>
           )}
         </div>
       )}
@@ -104,7 +108,7 @@ export function SettlementView({
                   <span className="min-w-0 flex-1 truncate">{e.description}</span>
                   <span className="hidden text-xs text-[var(--text-muted)] sm:inline">{formatDate(e.date)}</span>
                   <span className="text-xs text-[var(--text-muted)]">Pagó {payer?.name}</span>
-                  <span className="w-20 text-right font-medium">{formatMoney(e.amount)}</span>
+                  <span className="w-20 text-right font-medium tabular-nums">{formatMoney(e.amount)}</span>
                 </li>
               );
             })}

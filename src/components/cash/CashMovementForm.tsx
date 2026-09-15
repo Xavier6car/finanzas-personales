@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createCashMovement } from "@/actions/cash";
 import { formatDateInput } from "@/lib/format";
+import { Icon } from "@/components/ui/Icon";
 
 interface UserOption {
   id: string;
@@ -74,14 +75,16 @@ export function CashMovementForm({
             className={`btn flex-1 ${direction === "in" ? "btn-primary" : "btn-secondary"}`}
             onClick={() => setDirection("in")}
           >
-            ➕ Retiro (agrega efectivo)
+            <Icon name="plus" className="h-4 w-4" />
+            Retiro (agrega efectivo)
           </button>
           <button
             type="button"
             className={`btn flex-1 ${direction === "out" ? "btn-primary" : "btn-secondary"}`}
             onClick={() => setDirection("out")}
           >
-            ➖ Ajuste (quita efectivo)
+            <Icon name="minus" className="h-4 w-4" />
+            Ajuste (quita efectivo)
           </button>
         </div>
         <p className="mt-1 text-xs text-[var(--text-muted)]">

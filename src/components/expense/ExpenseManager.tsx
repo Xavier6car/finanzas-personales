@@ -8,6 +8,7 @@ import { ExpenseForm, type ExpenseFormValues } from "@/components/expense/Expens
 import { deleteExpense } from "@/actions/expense";
 import { formatDate, formatDateInput, formatMoney } from "@/lib/format";
 import { categoryIcon } from "@/lib/constants";
+import { Icon } from "@/components/ui/Icon";
 
 interface UserOption {
   id: string;
@@ -90,8 +91,16 @@ export function ExpenseManager({
                       </p>
                       {(expense.isShared || expense.paidWithCash) && (
                         <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-[var(--text-secondary)]">
-                          {expense.isShared && <span className="pill">🤝 Compartido</span>}
-                          {expense.paidWithCash && <span className="pill">💵 Efectivo</span>}
+                          {expense.isShared && (
+                            <span className="pill">
+                              <Icon name="users" className="h-3 w-3" /> Compartido
+                            </span>
+                          )}
+                          {expense.paidWithCash && (
+                            <span className="pill">
+                              <Icon name="income" className="h-3 w-3" /> Efectivo
+                            </span>
+                          )}
                           {expense.isShared &&
                             expense.shares.map((s) => (
                               <span key={s.userId}>
@@ -111,7 +120,7 @@ export function ExpenseManager({
                         {payer.name}
                       </span>
                     )}
-                    <span className="text-right font-semibold text-critical">-{formatMoney(expense.amount)}</span>
+                    <span className="text-right font-semibold tabular-nums text-critical">-{formatMoney(expense.amount)}</span>
                     <div className="flex items-center gap-2">
                       <button
                         className="btn btn-ghost !px-2 !py-1 text-xs"

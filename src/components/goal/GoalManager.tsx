@@ -7,6 +7,7 @@ import { GoalForm, type GoalFormValues } from "@/components/goal/GoalForm";
 import { ContributionForm } from "@/components/goal/ContributionForm";
 import { deleteGoal, deleteContribution } from "@/actions/goal";
 import { formatDate, formatDateInput, formatMoney, formatPercent } from "@/lib/format";
+import { Icon } from "@/components/ui/Icon";
 
 interface UserOption {
   id: string;
@@ -117,10 +118,10 @@ export function GoalManager({
                   />
                 </div>
                 <div className="mt-2 flex items-center justify-between text-sm">
-                  <span className="font-semibold">
+                  <span className="font-semibold tabular-nums">
                     {formatMoney(accumulated)} <span className="font-normal text-[var(--text-muted)]">de {formatMoney(goal.targetAmount)}</span>
                   </span>
-                  <span className="font-semibold text-brand">{formatPercent(percent)}</span>
+                  <span className="font-semibold text-brand tabular-nums">{formatPercent(percent)}</span>
                 </div>
                 <p className="text-xs text-[var(--text-muted)]">
                   {remaining > 0 ? `Faltan ${formatMoney(remaining)} para alcanzarla.` : "¡Meta alcanzada! 🎉"}
@@ -152,8 +153,12 @@ export function GoalManager({
                             {formatDate(c.date)} · {userOf(c.userId)?.name} {c.note ? `· ${c.note}` : ""}
                           </span>
                           <span className="flex shrink-0 items-center gap-2">
-                            <span className="font-medium">{formatMoney(c.amount)}</span>
-                            <ConfirmButton onConfirm={() => deleteContribution(c.id)} label="✕" />
+                            <span className="font-medium tabular-nums">{formatMoney(c.amount)}</span>
+                            <ConfirmButton
+                              onConfirm={() => deleteContribution(c.id)}
+                              label={<Icon name="close" className="h-3.5 w-3.5" />}
+                              ariaLabel="Eliminar aporte"
+                            />
                           </span>
                         </li>
                       ))}
