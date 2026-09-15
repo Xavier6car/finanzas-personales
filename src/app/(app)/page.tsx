@@ -49,8 +49,8 @@ export default async function DashboardPage({
         <StatCard label="Gastos generales" value={formatMoney(data.totals.expensesHousehold)} icon="📉" />
         <StatCard
           label="Balance del período"
-          value={formatMoney(data.totals.balance)}
-          tone={data.totals.balance >= 0 ? "good" : "critical"}
+          value={formatMoney(data.totals.cumulativeSavings + totalCash)}
+          tone={data.totals.cumulativeSavings + totalCash >= 0 ? "good" : "critical"}
           icon="⚖️"
         />
         <StatCard label="Ahorro acumulado" value={formatMoney(data.totals.cumulativeSavings)} icon="🏦" />
