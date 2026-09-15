@@ -63,9 +63,10 @@ export function ExpenseForm({
 
   // Comisión bancaria (ej. débitos en el exterior): la comisión base se
   // ingresa a mano porque varía por transacción, y el IVA/ISD se calculan
-  // automáticamente sobre esa comisión con las tasas vigentes.
-  const commissionIva = round2(commissionBase * IVA_RATE);
-  const commissionIsd = round2(commissionBase * ISD_RATE);
+  // automáticamente con las tasas vigentes sobre el monto total del gasto
+  // (no sobre la comisión).
+  const commissionIva = round2(values.amount * IVA_RATE);
+  const commissionIsd = round2(values.amount * ISD_RATE);
   const commissionTotal = round2(commissionBase + commissionIva + commissionIsd);
   const effectiveAmount = round2(values.amount + (hasCommission ? commissionTotal : 0));
 
@@ -208,8 +209,8 @@ export function ExpenseForm({
           <span className="block text-sm font-semibold">💳 ¿Tiene comisión bancaria (IVA/ISD)?</span>
           <span className="block text-xs text-[var(--text-muted)]">
             Para débitos con recargo (ej. pagos en el exterior). Ingresa la comisión base; el IVA (
-            {Math.round(IVA_RATE * 100)}%) y el ISD ({Math.round(ISD_RATE * 100)}%) se calculan solos y se suman al
-            monto del gasto.
+            {Math.round(IVA_RATE * 100)}%) y el ISD ({Math.round(ISD_RATE * 100)}%) se calculan solos sobre el monto
+            total del gasto y se suman todos al total.
           </span>
         </span>
       </label>
@@ -234,11 +235,11 @@ export function ExpenseForm({
               <span>{formatMoney(commissionBase)}</span>
             </li>
             <li className="flex justify-between text-[var(--text-muted)]">
-              <span>IVA ({Math.round(IVA_RATE * 100)}%)</span>
+              <span>IVA ({Math.round(IVA_RATE * 100)}% del monto)</span>
               <span>{formatMoney(commissionIva)}</span>
             </li>
             <li className="flex justify-between text-[var(--text-muted)]">
-              <span>ISD ({Math.round(ISD_RATE * 100)}%)</span>
+              <span>ISD ({Math.round(ISD_RATE * 100)}% del monto)</span>
               <span>{formatMoney(commissionIsd)}</span>
             </li>
             <li className="flex justify-between border-t border-[var(--border)] pt-1 font-semibold">
